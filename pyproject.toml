@@ -1,0 +1,68 @@
+[tool.poetry]
+name = "marmolada"
+version = "0.1.0"
+description = ""
+authors = ["Nils Philippsen <nils@tiptoe.de>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+PyYAML = "^6.0"
+click = "^8.0.3"
+click-plugins = "^1.1.1"
+fastapi = {version = "^0.85|^0.86|^0.87|^0.88|^0.89|^0.90|^0.91|^0.92|^0.93|^0.94|^0.95", optional = true}
+uvicorn = {version = "^0.16|^0.17|^0.18|^0.19|^0.20|^0.21|^0.22", optional = true}
+python-multipart = {version = "^0.0.6", optional = true}
+alembic = {version = "^1.7.5", optional = true}
+SQLAlchemy = {version = "^1.4.26|^2", optional = true}
+celery = {version = "^5.2.3", optional = true}
+
+[tool.poetry.group.dev.dependencies]
+black = "^22|^23"
+pytest = "^5.2|^6|^7"
+pytest-cov = "^3.0.0 || ^4.0.0"
+tox = "^3.24.4|^4"
+aiosqlite = "^0.17.0|^0.18.0|^0.19.0"
+httpx = "^0.21|^0.22|^0.23|^0.24"
+pytest-asyncio = "^0.16.0|^0.17.0|^0.18.0|^0.19.0"
+ruff = "^0.0.269"
+toml = "^0.10.2"
+
+[tool.poetry.extras]
+api = ["fastapi", "uvicorn", "python-multipart"]
+database = ["alembic", "SQLAlchemy"]
+tasks = ["celery"]
+
+[tool.poetry.scripts]
+marmolada = "marmolada.core.cli:cli"
+
+[tool.poetry.plugins."marmolada.cli"]
+"api" = "marmolada.api.cli:api"
+"database" = "marmolada.database.cli:database"
+"tasks" = "marmolada.tasks.cli:tasks"
+
+[tool.pytest.ini_options]
+addopts = "--cov=marmolada --cov-config .coveragerc --cov-report term --cov-report xml --cov-report html"
+asyncio_mode = "auto"
+flake8-max-line-length = 100
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+select = ["E", "F", "W", "I", "UP", "S", "B", "RUF"]
+line-length = 100
+target-version = "py310"
+ignore = ["UP038"]
+allowed-confusables = ["’"]
+
+[tool.ruff.per-file-ignores]
+"tests/*" = ["S101"]
+
+# Kept around, keep in sync with ruff
+[tool.isort]
+line_length = 100
+profile = "black"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
