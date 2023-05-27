@@ -1,0 +1,16 @@
+---
+database:
+  sqlalchemy:
+    url: "sqlite:///devdata.db"
+
+api:
+  host: "127.0.0.1"
+  port: 8080
+
+artifacts:
+  path: "/var/lib/marmolada/artifacts"
+
+tasks:
+  celery:
+    broker_url: "amqp://marmolada:marmolada@localhost:5672/marmolada"
+    result_backend: "rpc://"
