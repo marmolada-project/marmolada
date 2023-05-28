@@ -4,6 +4,7 @@ from tempfile import NamedTemporaryFile
 
 import pytest
 import yaml
+from click.testing import CliRunner
 
 from marmolada.core.configuration import config, read_configuration
 
@@ -105,3 +106,11 @@ def marmolada_config(marmolada_config_files, tmp_path, request):
             test_artifacts_dir = tmp_path / "test_artifacts"
             test_artifacts_dir.mkdir()
             config["artifacts"]["path"] = str(test_artifacts_dir)
+
+
+# Misc fixtures
+
+
+@pytest.fixture
+def cli_runner():
+    return CliRunner()
