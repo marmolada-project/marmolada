@@ -5,6 +5,13 @@ import pytest
 from marmolada.core import cli
 
 
+@pytest.fixture(autouse=True)
+def dont_read_system_config_file(tmp_path):
+    with mock.patch.object(cli, "DEFAULT_CONFIG_FILE"):
+        cli.DEFAULT_CONFIG_FILE = str(tmp_path / "marmolada-config.yml")
+        yield
+
+
 @cli.cli.command("test")
 def _test_cli():
     pass
@@ -27,25 +34,12 @@ class TestCLI:
         match testcase:
             case "without-config":
                 assert result.exit_code == 0
-                assert read_configuration.call_count == 2
-                read_configuration.assert_has_calls(
-                    (
-                        mock.call(cli.DEFAULT_CONFIG_FILE, clear=True, validate=False),
-                        mock.call(clear=False, validate=True),
-                    )
+                read_configuration.assert_called_once_with(
+                    cli.DEFAULT_CONFIG_FILE, clear=True, validate=True
                 )
             case "with-config":
                 assert result.exit_code == 0
-                assert read_configuration.call_count == 2
-                read_configuration.assert_has_calls(
-                    (
-                        mock.call("/dev/null", clear=True, validate=False),
-                        mock.call(clear=False, validate=True),
-                    )
-                )
+                read_configuration.assert_called_once_with("/dev/null", clear=True, validate=True)
             case "with-missing-config":
                 assert result.exit_code != 0
-                assert isinstance(result.exception, FileNotFoundError)
-                read_configuration.assert_called_once_with(
-                    str(tmp_path / "this doesn’t exist"), clear=True, validate=False
-                )
+                read_configuration.assert_not_called()
