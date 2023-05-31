@@ -43,7 +43,6 @@ marmolada = "marmolada.core.cli:cli"
 [tool.pytest.ini_options]
 addopts = "--cov=marmolada --cov-config .coveragerc --cov-report term --cov-report xml --cov-report html"
 asyncio_mode = "auto"
-flake8-max-line-length = 100
 
 [tool.black]
 line-length = 100
