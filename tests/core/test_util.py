@@ -2,7 +2,7 @@ from contextlib import nullcontext
 
 import pytest
 
-from marmolada.core.util import merge_dicts
+from marmolada.core import util
 
 
 @pytest.mark.parametrize(
@@ -33,7 +33,23 @@ def test_merge_dicts(src_dicts, expected_result):
         succeeds = True
 
     with expectation:
-        result = merge_dicts(*src_dicts)
+        result = util.merge_dicts(*src_dicts)
 
     if succeeds:
         assert result == expected_result
+
+
+@pytest.mark.parametrize(
+    "camelcase, expected",
+    (
+        ("ABC", "abc"),
+        ("ALongAndWindyRoad", "a_long_and_windy_road"),
+        ("hahaHello", "haha_hello"),
+        ("URLProcrastinator", "url_procrastinator"),
+        ("AB", "ab"),
+        ("", ""),
+        ("X", "x"),
+    ),
+)
+def test_camel_case_to_lower_with_underscores(camelcase, expected):
+    assert util.camel_case_to_lower_with_underscores(camelcase) == expected
