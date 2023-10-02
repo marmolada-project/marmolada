@@ -14,6 +14,10 @@ uvicorn = {version = "^0.16|^0.17|^0.18|^0.19|^0.20|^0.21|^0.22", optional = tru
 python-multipart = {version = "^0.0.6", optional = true}
 alembic = {version = "^1.7.5", optional = true}
 SQLAlchemy = {version = "^1.4.26|^2", optional = true}
+greenlet = [
+    {version = "^2.0.2", optional = true, python = "<3.12"},
+    {version = "^3.0.0rc", optional = true, python = ">3.12"}
+]
 celery = {version = "^5.2.3", optional = true}
 psycopg2 = {version = "^2.9.6", optional = true}
 asyncpg = {version = "^0.27.0 || ^0.28.0", optional = true}
@@ -33,7 +37,7 @@ pytest-postgresql = "^5.0.0"
 
 [tool.poetry.extras]
 api = ["fastapi", "uvicorn", "python-multipart"]
-database = ["alembic", "SQLAlchemy", "psycopg2", "asyncpg"]
+database = ["alembic", "SQLAlchemy", "greenlet", "psycopg2", "asyncpg"]
 tasks = ["celery"]
 
 [tool.poetry.scripts]
