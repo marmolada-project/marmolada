@@ -9,11 +9,11 @@ python = "^3.11"
 PyYAML = "^6.0"
 click = "^8.0.3"
 click-plugins = "^1.1.1"
-fastapi = {version = "^0.85|^0.86|^0.87|^0.88|^0.89|^0.90|^0.91|^0.92|^0.93|^0.94|^0.95", optional = true}
+fastapi = {version = "^0.93|^0.94|^0.95", optional = true}
 uvicorn = {version = "^0.16|^0.17|^0.18|^0.19|^0.20|^0.21|^0.22", optional = true}
 python-multipart = {version = "^0.0.6", optional = true}
 alembic = {version = "^1.7.5", optional = true}
-SQLAlchemy = {version = "^1.4.26|^2", optional = true}
+SQLAlchemy = {version = "^2", optional = true}
 greenlet = [
     {version = "^2.0.2", optional = true, python = "<3.12"},
     {version = "^3.0.0rc", optional = true, python = ">3.12"}
