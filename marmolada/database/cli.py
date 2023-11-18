@@ -1,5 +1,3 @@
-import asyncio
-
 import click
 
 from .setup import setup_db_schema
@@ -12,4 +10,4 @@ def database():
 
 @database.command()
 def setup():
-    asyncio.run(setup_db_schema())
+    setup_db_schema()

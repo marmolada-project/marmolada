@@ -11,9 +11,9 @@ from marmolada.database import setup
 @mock.patch("marmolada.database.setup.alembic")
 @mock.patch("marmolada.database.setup.metadata")
 @mock.patch("marmolada.database.setup.inspect")
-@mock.patch("marmolada.database.setup.get_engine")
-async def test_setup_db_schema(get_engine, inspect, metadata, alembic, db_empty, capsys):
-    get_engine.return_value = engine = mock.MagicMock()
+@mock.patch("marmolada.database.setup.create_engine")
+def test_setup_db_schema(create_engine, inspect, metadata, alembic, db_empty, capsys):
+    create_engine.return_value = engine = mock.MagicMock()
     inspection_result = inspect.return_value
     inspection_result.has_table.return_value = not db_empty
     metadata.tables = ["boo"]
@@ -26,7 +26,7 @@ async def test_setup_db_schema(get_engine, inspect, metadata, alembic, db_empty,
         expectation = pytest.raises(SystemExit)
 
     with expectation:
-        await setup.setup_db_schema()
+        setup.setup_db_schema()
 
     if db_empty:
         metadata.create_all.assert_called_with(bind=engine)
