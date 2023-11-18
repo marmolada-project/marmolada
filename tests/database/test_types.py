@@ -1,8 +1,9 @@
 import datetime as dt
+import pathlib
 
 import pytest
 
-from marmolada.database.types import TZDateTime
+from marmolada.database.types import Path, TZDateTime
 
 
 class SQLATypeDecoratorTest:
@@ -35,6 +36,22 @@ class SQLATypeDecoratorTest:
                 db_type_obj.process_result_value(input_value, "dialect")
         else:
             assert db_type_obj.process_result_value(input_value, "dialect") == expected_result
+
+
+class TestPath(SQLATypeDecoratorTest):
+    db_type = Path
+
+    process_bind_param_testcases = (
+        (None, None),
+        ("/foo", "/foo"),
+        ("/foo/", "/foo"),
+        (pathlib.Path("/foo"), "/foo"),
+    )
+
+    process_result_value_testcases = (
+        (None, None),
+        ("/foo", pathlib.Path("/foo")),
+    )
 
 
 class TestTZDateTime(SQLATypeDecoratorTest):
