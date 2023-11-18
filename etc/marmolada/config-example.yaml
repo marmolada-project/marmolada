@@ -8,7 +8,7 @@ api:
   port: 8080
 
 artifacts:
-  path: "/var/lib/marmolada/artifacts"
+  root: "/var/lib/marmolada/artifacts"
 
 tasks:
   celery:

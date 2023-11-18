@@ -95,7 +95,7 @@ def marmolada_config(marmolada_config_files, tmp_path, request):
     """
     read_configuration(*marmolada_config_files, clear=True)
 
-    # Optionally, override artifacts path with a temporary, empty one for tests.
+    # Optionally, override artifacts root path with a temporary, empty one for tests.
     tweak_for_tests = True
     for node in request.node.listchain():
         for marker in node.own_markers:
@@ -103,9 +103,9 @@ def marmolada_config(marmolada_config_files, tmp_path, request):
                 tweak_for_tests = marker.kwargs.get("tweak_for_tests", tweak_for_tests)
     if tweak_for_tests:
         if "artifacts" in config:
-            test_artifacts_dir = tmp_path / "test_artifacts"
-            test_artifacts_dir.mkdir()
-            config["artifacts"]["path"] = str(test_artifacts_dir)
+            test_artifacts_root = tmp_path / "test_artifacts"
+            test_artifacts_root.mkdir()
+            config["artifacts"]["root"] = str(test_artifacts_root)
 
 
 # Misc fixtures
