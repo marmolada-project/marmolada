@@ -15,13 +15,13 @@ class Thing(Base, mixins.UuidPrimaryKey, mixins.Creatable, mixins.Updatable):
 
 
 async def test_creating(db_session):
-    now = dt.datetime.utcnow().replace(tzinfo=dt.UTC)
+    now = dt.datetime.now(dt.UTC)
 
     thing = Thing()
     db_session.add(thing)
     await db_session.flush()
 
-    then = dt.datetime.utcnow().replace(tzinfo=dt.UTC)
+    then = dt.datetime.now(dt.UTC)
 
     assert now <= thing.created_at <= then
 
@@ -31,13 +31,13 @@ async def test_updating(db_session):
         thing = Thing()
         db_session.add(thing)
 
-    then = dt.datetime.utcnow().replace(tzinfo=dt.UTC)
+    then = dt.datetime.now(dt.UTC)
 
     async with db_session.begin():
         thing = await db_session.get(Thing, thing.uuid, with_for_update=True)
         thing.something = 5
 
-    then_again = dt.datetime.utcnow().replace(tzinfo=dt.UTC)
+    then_again = dt.datetime.now(dt.UTC)
 
     async with db_session.begin():
         thing = await db_session.get(
@@ -46,7 +46,7 @@ async def test_updating(db_session):
         assert then <= thing.updated_at <= then_again
         thing.something = 6
 
-    then_again_and_later = dt.datetime.utcnow().replace(tzinfo=dt.UTC)
+    then_again_and_later = dt.datetime.now(dt.UTC)
 
     async with db_session.begin():
         thing = await db_session.get(Thing, thing.uuid, populate_existing=True)
