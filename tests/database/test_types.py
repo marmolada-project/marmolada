@@ -60,10 +60,10 @@ class TestTZDateTime(SQLATypeDecoratorTest):
     process_bind_param_testcases = (
         (None, None),
         (dt.datetime(2023, 1, 1), TypeError),
-        (dt.datetime(2023, 1, 1).replace(tzinfo=dt.UTC), dt.datetime(2023, 1, 1)),
+        (dt.datetime(2023, 1, 1, tzinfo=dt.UTC), dt.datetime(2023, 1, 1)),
     )
 
     process_result_value_testcases = (
         (None, None),
-        (dt.datetime(2023, 1, 1), dt.datetime(2023, 1, 1).replace(tzinfo=dt.UTC)),
+        (dt.datetime(2023, 1, 1), dt.datetime(2023, 1, 1, tzinfo=dt.UTC)),
     )
