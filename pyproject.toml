@@ -58,7 +58,6 @@ line-length = 100
 [tool.ruff]
 select = ["E", "F", "W", "I", "UP", "S", "B", "RUF"]
 line-length = 100
-target-version = "py311"
 ignore = ["UP038"]
 allowed-confusables = ["’"]
 
