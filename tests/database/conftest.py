@@ -5,6 +5,7 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from marmolada.database.main import Base, _async_from_sync_url, init_model, session_maker
+from marmolada.database.setup import _gen_test_data_objs
 
 # Like postgresql_proc, but scoped for test functions. This makes testing slower but ensures that
 # tests don't affect each other, especially if conducted in parallel.
@@ -77,3 +78,32 @@ async def db_session(db_model_initialized):
         yield db_session
     finally:
         await db_session.close()
+
+
+@pytest.fixture
+async def db_obj(request, db_session):
+    """Fixture to create an object of a tested model type.
+
+    This is for asynchronous test functions/methods."""
+    async with db_session.begin():
+        db_obj_dependencies = request.instance._db_obj_get_dependencies()
+        attrs = {**request.instance.attrs, **db_obj_dependencies}
+        obj = request.instance.cls(**attrs)
+        obj._db_obj_dependencies = db_obj_dependencies
+        db_session.add(obj)
+        await db_session.flush()
+
+        yield obj
+
+        await db_session.rollback()
+
+
+@pytest.fixture
+async def db_test_data(db_session):
+    """A fixture to fill the DB with test data.
+
+    Use this in asynchronous tests.
+    """
+    async with db_session.begin():
+        for obj in _gen_test_data_objs():
+            db_session.add(obj)
