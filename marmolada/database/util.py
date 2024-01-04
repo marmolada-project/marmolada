@@ -6,7 +6,7 @@ from sqlalchemy.sql.expression import FunctionElement
 class utcnow(FunctionElement):
     """Current timestamp in UTC for SQL expressions."""
 
-    type = DateTime
+    type = DateTime()
     inherit_cache = True
 
 
