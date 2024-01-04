@@ -1,5 +1,5 @@
 from typing import Any
-from uuid import UUID, uuid4
+from uuid import UUID, uuid1
 
 from sqlalchemy import Column, Uuid, func
 from sqlalchemy.event import listens_for
@@ -27,9 +27,7 @@ class Updatable:
 class UuidPrimaryKey:
     @declared_attr
     def _uuid(cls):
-        return Column(
-            "uuid", Uuid, primary_key=True, default=uuid4, server_default=func.gen_random_uuid()
-        )
+        return Column("uuid", Uuid, primary_key=True, default=uuid1)
 
     @hybrid_property
     def uuid(self) -> UUID:
@@ -49,4 +47,4 @@ class UuidPrimaryKey:
 @listens_for(UuidPrimaryKey, "init", propagate=True)
 def uuid_primary_key_init(target: UuidPrimaryKey, args: tuple[Any], kwargs: dict[str, Any]) -> None:
     # Ensure uuid is available early
-    kwargs["uuid"] = kwargs.get("uuid") or uuid4()
+    kwargs["uuid"] = kwargs.get("uuid") or uuid1()

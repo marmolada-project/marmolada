@@ -60,7 +60,7 @@ class TestUuidMixin:
             db_session.add(thing)
 
         assert isinstance(thing.uuid, uuid.UUID)
-        assert thing.uuid.version == 4
+        assert thing.uuid.version == 1
 
         with pytest.raises(AttributeError, match="Can’t modify Thing.uuid"):
             thing.uuid = 5
