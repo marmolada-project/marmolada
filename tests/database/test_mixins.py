@@ -2,7 +2,8 @@ import datetime as dt
 import uuid
 
 import pytest
-from sqlalchemy import Column, Integer, select
+from sqlalchemy import select
+from sqlalchemy.orm import Mapped, mapped_column
 
 from marmolada.database import mixins
 from marmolada.database.main import Base
@@ -11,7 +12,7 @@ from marmolada.database.main import Base
 class Thing(Base, mixins.UuidPrimaryKey, mixins.Creatable, mixins.Updatable):
     __tablename__ = "things"
 
-    something = Column(Integer, nullable=True)
+    something: Mapped[int] = mapped_column(nullable=True)
 
 
 async def test_creating(db_session):
