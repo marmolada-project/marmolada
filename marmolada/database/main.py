@@ -3,7 +3,7 @@ from copy import deepcopy
 from sqlalchemy import MetaData
 from sqlalchemy.engine import URL, make_url
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from ..core.configuration import config
 
@@ -17,7 +17,10 @@ naming_convention = {
 }
 metadata = MetaData(naming_convention=naming_convention)
 
-Base = declarative_base(metadata=metadata)
+
+class Base(DeclarativeBase):
+    metadata = metadata
+
 
 session_maker = sessionmaker(class_=AsyncSession, expire_on_commit=False, future=True)
 

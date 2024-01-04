@@ -11,5 +11,5 @@ class utcnow(FunctionElement):
 
 
 @compiles(utcnow, "postgresql")
-def _postgresql_utcnow(element, compiler, **kwargs):
+def _postgresql_utcnow(element, compiler, **kwargs) -> str:
     return "(NOW() AT TIME ZONE 'utc')"

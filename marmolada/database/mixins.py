@@ -1,10 +1,11 @@
+import datetime as dt
 from typing import Any
 from uuid import UUID, uuid1
 
-from sqlalchemy import Column, Uuid, func
+from sqlalchemy import Uuid
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import QueryableAttribute, declared_attr
+from sqlalchemy.orm import Mapped, QueryableAttribute, mapped_column
 
 from .types.tzdatetime import TZDateTime
 from .util import utcnow
@@ -13,21 +14,17 @@ __all__ = ("Creatable", "Updatable", "UuidPrimaryKey")
 
 
 class Creatable:
-    @declared_attr
-    def created_at(cls):
-        return Column(TZDateTime, nullable=False, default=utcnow())
+    created_at: Mapped[dt.datetime] = mapped_column(TZDateTime, nullable=False, default=utcnow())
 
 
 class Updatable:
-    @declared_attr
-    def updated_at(cls):
-        return Column(TZDateTime, nullable=False, default=utcnow(), onupdate=utcnow())
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        TZDateTime, nullable=False, default=utcnow(), onupdate=utcnow()
+    )
 
 
 class UuidPrimaryKey:
-    @declared_attr
-    def _uuid(cls):
-        return Column("uuid", Uuid, primary_key=True, default=uuid1)
+    _uuid: Mapped[UUID] = mapped_column("uuid", Uuid, primary_key=True, default=uuid1)
 
     @hybrid_property
     def uuid(self) -> UUID:

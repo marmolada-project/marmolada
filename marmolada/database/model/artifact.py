@@ -5,9 +5,9 @@ import pathlib
 from collections import defaultdict
 from typing import Any, ClassVar
 
-from sqlalchemy import Column, Text, event
+from sqlalchemy import Text, event
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Session, object_session
+from sqlalchemy.orm import Mapped, Session, mapped_column, object_session
 from sqlalchemy.sql import SQLColumnExpression
 
 from ...core.configuration import config
@@ -24,9 +24,9 @@ class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
     _sessions_added_files: ClassVar = defaultdict(set)
     _sessions_removed_files: ClassVar = defaultdict(set)
 
-    content_type = Column(Text, nullable=False)
+    content_type: Mapped[str] = mapped_column(Text, nullable=False)
     # Default for _path set in artifact_path_init() below
-    _path = Column("path", Path, unique=True, nullable=False)
+    _path: Mapped[pathlib.Path] = mapped_column("path", Path, unique=True, nullable=False)
 
     artifacts_root: ClassVar[pathlib.Path | None] = None
 
