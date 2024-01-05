@@ -1,1 +1,1 @@
-from .main import Base, get_engine, init_model, metadata, session_maker  # noqa: F401
+from .main import Base, get_engine, init_model, metadata, session_maker

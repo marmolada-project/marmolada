@@ -1,1 +1,1 @@
-from .artifact import Artifact  # noqa: F401
+from .artifact import Artifact
