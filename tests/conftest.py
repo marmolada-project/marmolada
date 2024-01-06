@@ -81,6 +81,9 @@ def marmolada_config_files(
         config_file_obj.close()
         config_file_paths.append(objtype(config_file_obj.name))
 
+    if not config_file_paths:
+        config_file_paths = [EXAMPLE_CONFIG.absolute()]
+
     # Let tests work with the configuration files.
     yield config_file_paths
 

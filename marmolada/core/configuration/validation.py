@@ -1,7 +1,7 @@
 from enum import Enum
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import AmqpDsn, BaseModel, RedisDsn, conint, stricturl
+from pydantic import AmqpDsn, AnyUrl, BaseModel, Field, RedisDsn, UrlConstraints
 
 # types
 
@@ -15,7 +15,7 @@ class LogLevel(str, Enum):
     critical = "critical"
 
 
-AmqpRpcDsn = stricturl(host_required=False, allowed_schemes=("rpc",))
+AmqpRpcDsn = Annotated[AnyUrl, UrlConstraints(host_required=False, allowed_schemes=("rpc",))]
 
 
 # Pydantic models
@@ -31,7 +31,7 @@ class TasksModel(BaseModel):
 
 
 class SQLAlchemyModel(BaseModel):
-    url: stricturl(tld_required=False, host_required=False)
+    url: Annotated[AnyUrl, UrlConstraints(host_required=False)]
 
 
 class DatabaseModel(BaseModel):
@@ -46,13 +46,13 @@ class LoggingModel(BaseModel):
 
 
 class APIModel(BaseModel):
-    loglevel: LogLevel | None
-    host: str | None
-    port: conint(gt=0, lt=65536) | None
-    logging: LoggingModel | None
+    loglevel: LogLevel | None = None
+    host: str | None = None
+    port: Annotated[int, Field(gt=0, lt=65536)] | None = None
+    logging: LoggingModel | None = None
 
 
 class ConfigModel(BaseModel):
-    api: APIModel | None
-    database: DatabaseModel | None
-    tasks: TasksModel | None
+    api: APIModel | None = None
+    database: DatabaseModel | None = None
+    tasks: TasksModel | None = None
