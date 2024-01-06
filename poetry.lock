@@ -989,7 +989,7 @@ files = [
 name = "pydantic"
 version = "1.10.13"
 description = "Data validation and settings management using python type hints"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "pydantic-1.10.13-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:efff03cc7a4f29d9009d1c96ceb1e7a70a65cfe86e89d34e4a5f2ab1e5693737"},
@@ -1510,4 +1510,4 @@ tasks = ["celery"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ec6fe2029e3c662c5b017b91910aa96a1a6d55a9a2011539d850467a8f5d0677"
+content-hash = "e0bdc23176aaeb63a9d330383b04111d87c6bfe11becaf2d37e9315c8ba6830d"
