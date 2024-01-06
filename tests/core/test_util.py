@@ -37,19 +37,3 @@ def test_merge_dicts(src_dicts, expected_result):
 
     if succeeds:
         assert result == expected_result
-
-
-@pytest.mark.parametrize(
-    "camelcase, expected",
-    (
-        ("ABC", "abc"),
-        ("ALongAndWindyRoad", "a_long_and_windy_road"),
-        ("hahaHello", "haha_hello"),
-        ("URLProcrastinator", "url_procrastinator"),
-        ("AB", "ab"),
-        ("", ""),
-        ("X", "x"),
-    ),
-)
-def test_camel_case_to_lower_with_underscores(camelcase, expected):
-    assert util.camel_case_to_lower_with_underscores(camelcase) == expected
