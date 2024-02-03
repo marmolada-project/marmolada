@@ -6,7 +6,6 @@ omit =
 [report]
 precision = 2
 fail_under = 100
-exclude_lines =
-    pragma: no cover
+exclude_also =
     def __repr__
 show_missing = True
