@@ -1613,4 +1613,4 @@ tasks = ["celery"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c3366ceb8ef56b6356b4e76064675ac65b2102ad327cdb07caffef7a5a6d51a9"
+content-hash = "287a343a94792a4da7388b116efda40d2ac86a030416bf0cc92068f35e58ca63"
