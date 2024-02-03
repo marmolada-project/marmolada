@@ -35,6 +35,7 @@ ruff = "^0.0.269 || ^0.0.270 || ^0.0.271 || ^0.0.272 || ^0.0.276 || ^0.0.277 || 
 toml = "^0.10.2"
 psycopg = "^3.1.9"
 pytest-postgresql = "^5.0.0"
+coverage = "^7.4.1"
 
 [tool.poetry.extras]
 api = ["fastapi", "uvicorn", "python-multipart"]
