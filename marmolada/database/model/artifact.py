@@ -6,6 +6,7 @@ from collections import defaultdict
 from typing import Any, ClassVar
 
 from sqlalchemy import Text, event
+from sqlalchemy.engine.default import DefaultExecutionContext
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, Session, mapped_column, object_session
 from sqlalchemy.sql import SQLColumnExpression
@@ -18,6 +19,12 @@ from ..types import Path
 log = logging.getLogger(__name__)
 
 
+def _artifact_path_default(context: DefaultExecutionContext) -> str:
+    params = context.get_current_parameters()
+    uuid = params["uuid"]
+    return f"incoming/{uuid}"
+
+
 class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
     __tablename__ = "artifacts"
 
@@ -26,7 +33,9 @@ class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
 
     content_type: Mapped[str] = mapped_column(Text, nullable=False)
     # Default for _path set in artifact_path_init() below
-    _path: Mapped[pathlib.Path] = mapped_column("path", Path, unique=True, nullable=False)
+    _path: Mapped[pathlib.Path] = mapped_column(
+        "path", Path, unique=True, nullable=False, default=_artifact_path_default
+    )
 
     artifacts_root: ClassVar[pathlib.Path | None] = None
 
@@ -80,11 +89,6 @@ class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
     @data.deleter
     def data(self) -> None:
         self._sessions_removed_files[object_session(self)].add(self.full_path)
-
-
-@event.listens_for(Artifact, "init")
-def artifact_path_init(target: Artifact, args: tuple[Any], kwargs: dict[str, Any]) -> None:
-    kwargs.setdefault("_path", f"incoming/{kwargs['uuid']!s}")
 
 
 @event.listens_for(Session, "after_commit")
