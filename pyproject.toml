@@ -11,7 +11,7 @@ click = "^8.0.3"
 click-plugins = "^1.1.1"
 fastapi = {version = "^0.93|^0.94|^0.95|^0.96|^0.97|^0.98|^0.99|^0.100|^0.101|^0.102|^0.103|^0.104|^0.105|^0.106|^0.107|^0.108", optional = true}
 uvicorn = {version = "^0.16|^0.17|^0.18|^0.19|^0.20|^0.21|^0.22|^0.23|^0.24|^0.25", optional = true}
-python-multipart = {version = "^0.0.6 || ^0.0.7", optional = true}
+python-multipart = {version = "^0.0.6 || ^0.0.7 || ^0.0.8", optional = true}
 alembic = {version = "^1.7.5", optional = true}
 SQLAlchemy = {version = "^2", optional = true}
 greenlet = [

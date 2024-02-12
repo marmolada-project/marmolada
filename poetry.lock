@@ -1156,13 +1156,13 @@ six = ">=1.5"
 
 [[package]]
 name = "python-multipart"
-version = "0.0.7"
+version = "0.0.8"
 description = "A streaming multipart parser for Python"
 optional = true
 python-versions = ">=3.7"
 files = [
-    {file = "python_multipart-0.0.7-py3-none-any.whl", hash = "sha256:b1fef9a53b74c795e2347daac8c54b252d9e0df9c619712691c1cc8021bd3c49"},
-    {file = "python_multipart-0.0.7.tar.gz", hash = "sha256:288a6c39b06596c1b988bb6794c6fbc80e6c369e35e5062637df256bee0c9af9"},
+    {file = "python_multipart-0.0.8-py3-none-any.whl", hash = "sha256:999725bf08cf7a071073d157a27cc34f8669af98da0d2435bde1cc1493a50ec3"},
+    {file = "python_multipart-0.0.8.tar.gz", hash = "sha256:613015c642c2f6dc6d22e2d3a4d993683bb4752509ccd87f831dced121ed2f1d"},
 ]
 
 [package.extras]
@@ -1523,4 +1523,4 @@ tasks = ["celery"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "ee6b2f28e2dda7ad1dd4a94b9d9370c9f8be649749c8902791a25e84fd4f4d63"
+content-hash = "bd442d3b6d89b1372caec2c155b123c5ee2503dcd387edea4fb94867328909cc"
