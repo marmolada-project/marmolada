@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from marmolada.core.configuration import config
-from marmolada.database.model import Artifact
+from marmolada.database.model import Artifact, ImportBucket
 
 from .common import ModelTestBase
 
@@ -20,7 +20,10 @@ def artifacts_root_unset_cache():
 @pytest.mark.marmolada_config({"artifacts": {"root": "doesn't matter"}})
 class TestArtifact(ModelTestBase):
     cls = Artifact
-    attrs = {"content_type": "image/jpeg"}
+    attrs = {"content_type": "image/jpeg", "file_name": "DSC01234.JPG"}
+
+    def _db_obj_get_dependencies(self):
+        return {"import_bucket": ImportBucket()}
 
     async def test_artifacts_root(self, db_session):
         Artifact.artifacts_root = None
@@ -29,7 +32,7 @@ class TestArtifact(ModelTestBase):
 
     async def test_path_getter(self, db_obj: Artifact):
         assert db_obj._path == str(db_obj.path)
-        assert db_obj._path == f"incoming/{db_obj.uuid!s}"
+        assert db_obj._path == f"incoming/{db_obj.import_bucket.uuid!s}/{self.attrs['file_name']}"
 
     @pytest.mark.parametrize("test_type", (str, Path))
     async def test_path_setter(self, test_type: type, db_obj: Artifact, db_session: Session):

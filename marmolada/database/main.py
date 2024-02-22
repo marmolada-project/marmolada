@@ -1,8 +1,10 @@
 import pathlib
 from copy import deepcopy
+from typing import Any
 
 from sqlalchemy import MetaData
 from sqlalchemy import types as sqla_types
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.engine import URL, make_url
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
@@ -23,6 +25,7 @@ metadata = MetaData(naming_convention=naming_convention)
 type_annotation_map = {
     str: sqla_types.UnicodeText(),
     pathlib.Path: types.Path(),
+    dict[str, Any]: JSONB(),
 }
 
 
