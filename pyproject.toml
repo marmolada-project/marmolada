@@ -9,19 +9,18 @@ python = "^3.12"
 PyYAML = "^6.0"
 click = "^8.0.3"
 click-plugins = "^1.1.1"
-fastapi = {version = "^0.93|^0.94|^0.95|^0.96|^0.97|^0.98|^0.99|^0.100|^0.101|^0.102|^0.103|^0.104|^0.105|^0.106|^0.107|^0.108", optional = true}
+fastapi = {version = "^0.95|^0.96|^0.97|^0.98|^0.99|^0.100|^0.101|^0.102|^0.103|^0.104|^0.105|^0.106|^0.107|^0.108", optional = true}
 uvicorn = {version = "^0.16|^0.17|^0.18|^0.19|^0.20|^0.21|^0.22|^0.23|^0.24|^0.25", optional = true}
 python-multipart = {version = "^0.0.6 || ^0.0.7 || ^0.0.8 || ^0.0.9", optional = true}
 alembic = {version = "^1.7.5", optional = true}
 SQLAlchemy = {version = "^2", optional = true}
-greenlet = [
-    {version = "^2.0.2", optional = true, python = "<3.12"},
-    {version = "^3.0.0rc", optional = true, python = ">3.12"}
-]
+greenlet = {version = "^3.0.0rc", optional = true}
 celery = {version = "^5.2.3", optional = true}
 psycopg2 = {version = "^2.9.6", optional = true}
 asyncpg = {version = "^0.27.0 || ^0.28.0 || ^0.29.0", optional = true}
 pydantic = "^2.5.3"
+fastapi-pagination = {version = "^0.12.17", optional = true, extras = ["asyncpg", "sqlalchemy"]}
+anyio = {version = "^4.3.0", optional = true}
 
 [tool.poetry.group.dev.dependencies]
 black = "^22|^23"
@@ -39,9 +38,9 @@ coverage = "^7.4.1"
 pytest-xdist = "^3.5.0"
 
 [tool.poetry.extras]
-api = ["fastapi", "uvicorn", "python-multipart"]
+api = ["fastapi", "uvicorn", "python-multipart", "SQLAlchemy", "greenlet", "psycopg2", "asyncpg", "fastapi-pagination", "anyio"]
 database = ["alembic", "SQLAlchemy", "greenlet", "psycopg2", "asyncpg"]
-tasks = ["celery"]
+tasks = ["celery", "SQLAlchemy", "psycopg2"]
 
 [tool.poetry.scripts]
 marmolada = "marmolada.core.cli:cli"

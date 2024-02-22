@@ -19,4 +19,4 @@ class TestApp:
         assert response.status_code == 200
 
         result = response.json()
-        assert {"openapi", "info", "paths"} <= set(result)
+        assert {"openapi", "info", "paths", "components"} <= set(result)

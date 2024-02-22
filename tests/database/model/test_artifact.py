@@ -2,11 +2,12 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
+from anyio import Path as AsyncPath
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from marmolada.core.configuration import config
-from marmolada.database.model import Artifact, ImportBucket
+from marmolada.database.model import Artifact, Import
 
 from .common import ModelTestBase
 
@@ -23,7 +24,7 @@ class TestArtifact(ModelTestBase):
     attrs = {"content_type": "image/jpeg", "file_name": "DSC01234.JPG"}
 
     def _db_obj_get_dependencies(self):
-        return {"import_bucket": ImportBucket()}
+        return {"import_": Import()}
 
     async def test_artifacts_root(self, db_session):
         Artifact.artifacts_root = None
@@ -32,7 +33,7 @@ class TestArtifact(ModelTestBase):
 
     async def test_path_getter(self, db_obj: Artifact):
         assert db_obj._path == str(db_obj.path)
-        assert db_obj._path == f"incoming/{db_obj.import_bucket.uuid!s}/{self.attrs['file_name']}"
+        assert db_obj._path == f"incoming/{db_obj.import_.uuid!s}/{self.attrs['file_name']}"
 
     @pytest.mark.parametrize("test_type", (str, Path))
     async def test_path_setter(self, test_type: type, db_obj: Artifact, db_session: Session):
@@ -50,6 +51,9 @@ class TestArtifact(ModelTestBase):
 
     async def test_full_path(self, db_obj: Artifact):
         assert Path(config["artifacts"]["root"]) / db_obj.path == db_obj.full_path
+
+    async def test_async_full_path(self, db_obj: Artifact):
+        assert AsyncPath(config["artifacts"]["root"]) / db_obj.path == db_obj.async_full_path
 
     async def test_rename(self, db_obj: Artifact, db_session: Session):
         async with db_session.begin_nested():

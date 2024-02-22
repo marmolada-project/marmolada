@@ -36,12 +36,3 @@ def setup_db_schema() -> None:
         cfg.set_main_option("sqlalchemy.url", config["database"]["sqlalchemy"]["url"])
 
         alembic.command.stamp(cfg, "head")
-
-
-def _gen_test_data_objs() -> set:
-    """Generate database objects useful for testing.
-
-    Currently a no-op.
-    """
-    objs = set()
-    return objs
