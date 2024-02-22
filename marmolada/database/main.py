@@ -1,11 +1,14 @@
+import pathlib
 from copy import deepcopy
 
 from sqlalchemy import MetaData
+from sqlalchemy import types as sqla_types
 from sqlalchemy.engine import URL, make_url
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from ..core.configuration import config
+from . import types
 
 # use custom metadata to specify naming convention
 naming_convention = {
@@ -17,9 +20,15 @@ naming_convention = {
 }
 metadata = MetaData(naming_convention=naming_convention)
 
+type_annotation_map = {
+    str: sqla_types.UnicodeText(),
+    pathlib.Path: types.Path(),
+}
+
 
 class Base(DeclarativeBase):
     metadata = metadata
+    type_annotation_map = type_annotation_map
 
 
 session_maker = sessionmaker(class_=AsyncSession, expire_on_commit=False, future=True)
