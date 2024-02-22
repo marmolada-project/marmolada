@@ -1,1 +1,1 @@
-from .artifact import Artifact, ImportBucket
+from .artifact import Artifact, Import

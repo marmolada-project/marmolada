@@ -6,6 +6,7 @@ from collections import defaultdict
 from typing import Any, ClassVar
 from uuid import UUID
 
+from anyio import Path as AsyncPath
 from sqlalchemy import ForeignKey, event
 from sqlalchemy.engine.default import DefaultExecutionContext
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -19,19 +20,19 @@ from ..mixins import Creatable, Updatable, UuidPrimaryKey
 log = logging.getLogger(__name__)
 
 
-class ImportBucket(Base, UuidPrimaryKey, Creatable, Updatable):
-    __tablename__ = "import_buckets"
+class Import(Base, UuidPrimaryKey, Creatable, Updatable):
+    __tablename__ = "imports"
 
     meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
     complete: Mapped[bool] = mapped_column(default=False)
-    artifacts: Mapped[set["Artifact"]] = relationship(back_populates="import_bucket")
+    artifacts: Mapped[set["Artifact"]] = relationship(back_populates="import_")
 
 
 def _artifact_path_default(context: DefaultExecutionContext) -> str:
     params = context.get_current_parameters()
-    import_bucket_uuid = params["import_bucket_uuid"]
+    import_uuid = params["import_uuid"]
     file_name = params["file_name"]
-    return f"incoming/{import_bucket_uuid}/{file_name}"
+    return f"incoming/{import_uuid}/{file_name}"
 
 
 class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
@@ -49,8 +50,8 @@ class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
         "path", unique=True, nullable=False, default=_artifact_path_default
     )
 
-    import_bucket_uuid: Mapped[UUID] = mapped_column(ForeignKey(ImportBucket.uuid))
-    import_bucket: Mapped[ImportBucket] = relationship(back_populates="artifacts")
+    import_uuid: Mapped[UUID] = mapped_column(ForeignKey(Import.uuid))
+    import_: Mapped[Import] = relationship(back_populates="artifacts")
 
     source_uri: Mapped[str | None]
     file_name: Mapped[str]
@@ -85,7 +86,11 @@ class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
     def full_path(self) -> pathlib.Path:
         return self.artifacts_root / self.path
 
-    @hybrid_property
+    @property
+    def async_full_path(self) -> AsyncPath:
+        return AsyncPath(self.full_path)
+
+    @property
     def data(self) -> bytes:
         if self.full_path in self._sessions_removed_files[object_session(self)]:
             raise FileNotFoundError(errno.ENOENT, "No such file or directory")

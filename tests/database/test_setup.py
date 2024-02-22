@@ -40,8 +40,3 @@ def test_setup_db_schema(create_engine, inspect, metadata, alembic, db_empty, ca
         metadata.create_all.assert_not_called()
         alembic_cfg.set_main_option.assert_not_called()
         alembic.command.stamp.assert_not_called()
-
-
-def test__gen_test_data_objs():
-    result = setup._gen_test_data_objs()
-    assert isinstance(result, set)
