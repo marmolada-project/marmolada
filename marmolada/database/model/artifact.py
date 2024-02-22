@@ -4,11 +4,12 @@ import os
 import pathlib
 from collections import defaultdict
 from typing import Any, ClassVar
+from uuid import UUID
 
-from sqlalchemy import event
+from sqlalchemy import ForeignKey, event
 from sqlalchemy.engine.default import DefaultExecutionContext
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapped, Session, mapped_column, object_session
+from sqlalchemy.orm import Mapped, Session, mapped_column, object_session, relationship
 from sqlalchemy.sql import SQLColumnExpression
 
 from ...core.configuration import config
@@ -18,14 +19,25 @@ from ..mixins import Creatable, Updatable, UuidPrimaryKey
 log = logging.getLogger(__name__)
 
 
+class ImportBucket(Base, UuidPrimaryKey, Creatable, Updatable):
+    __tablename__ = "import_buckets"
+
+    meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
+    complete: Mapped[bool] = mapped_column(default=False)
+    artifacts: Mapped[set["Artifact"]] = relationship(back_populates="import_bucket")
+
+
 def _artifact_path_default(context: DefaultExecutionContext) -> str:
     params = context.get_current_parameters()
-    uuid = params["uuid"]
-    return f"incoming/{uuid}"
+    import_bucket_uuid = params["import_bucket_uuid"]
+    file_name = params["file_name"]
+    return f"incoming/{import_bucket_uuid}/{file_name}"
 
 
 class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
     __tablename__ = "artifacts"
+
+    artifacts_root: ClassVar[pathlib.Path | None] = None
 
     _sessions_added_files: ClassVar = defaultdict(set)
     _sessions_removed_files: ClassVar = defaultdict(set)
@@ -37,9 +49,13 @@ class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
         "path", unique=True, nullable=False, default=_artifact_path_default
     )
 
-    artifacts_root: ClassVar[pathlib.Path | None] = None
+    import_bucket_uuid: Mapped[UUID] = mapped_column(ForeignKey(ImportBucket.uuid))
+    import_bucket: Mapped[ImportBucket] = relationship(back_populates="artifacts")
 
-    def __new__(cls, *args: tuple, **kwargs: dict[str, Any]) -> "Artifact":
+    source_uri: Mapped[str | None]
+    file_name: Mapped[str]
+
+    def __new__(cls, *args: tuple[Any], **kwargs: dict[str, Any]) -> "Artifact":
         if not Artifact.artifacts_root:
             Artifact.artifacts_root = pathlib.Path(config["artifacts"]["root"])
         return super().__new__(cls)
