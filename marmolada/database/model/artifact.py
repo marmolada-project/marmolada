@@ -42,7 +42,7 @@ class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
     _sessions_added_files: ClassVar = defaultdict(set)
     _sessions_removed_files: ClassVar = defaultdict(set)
 
-    content_type: Mapped[str]
+    content_type: Mapped[str | None]
 
     # Default for _path set in artifact_path_init() below
     _path: Mapped[pathlib.Path] = mapped_column(
