@@ -2,6 +2,9 @@
 branch = True
 source = marmolada
 omit =
+concurrency =
+    greenlet
+    thread
 
 [report]
 precision = 2
