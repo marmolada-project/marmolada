@@ -17,8 +17,18 @@ from marmolada.database.model import Artifact
 
 @pytest.mark.usefixtures("db_test_data")
 class TestArtifacts:
-    async def test_get_all(self, client: AsyncClient, db_test_data_objs: dict[str, list[Base]]):
-        resp = await client.get(f"{base.API_PREFIX}/artifacts")
+    @pytest.mark.parametrize("for_import", (False, True), ids=("all", "for-import"))
+    async def test_get_all(
+        self, for_import: bool, client: AsyncClient, db_test_data_objs: dict[str, list[Base]]
+    ):
+        if for_import:
+            import_uuid = db_test_data_objs["imports"][0].uuid
+            endpoint = f"/imports/{import_uuid}/artifacts"
+        else:
+            endpoint = "/artifacts"
+
+        resp = await client.get(f"{base.API_PREFIX}{endpoint}")
+
         assert resp.status_code == status.HTTP_200_OK
         result = resp.json()
         for artifact in db_test_data_objs["artifacts"]:
@@ -72,13 +82,12 @@ class TestArtifacts:
             print("Hello!", file=fp)
 
         if from_upload:
-            endpoint = "artifacts"
+            endpoint = f"imports/{import_uuid}/artifacts"
             kwargs = {
-                "params": {"import": str(import_uuid)},
                 "files": {"file": (src_file.name, src_file.open("rb"))},
             }
         else:
-            endpoint = "artifacts/from-local-file"
+            endpoint = f"imports/{import_uuid}/artifacts/from-local-file"
             uri_scheme = "file"
             uri_host = getfqdn()
             local_path = src_file.absolute()
@@ -93,7 +102,6 @@ class TestArtifacts:
 
             kwargs = {
                 "json": {
-                    "import": str(import_uuid),
                     "source_uri": f"{uri_scheme}://{uri_host}{local_path}",
                 }
             }
@@ -126,5 +134,5 @@ class TestArtifacts:
                     else:
                         assert artifact.full_path.stat().st_nlink == 2
         else:
-            assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            assert resp.status_code == status.HTTP_404_NOT_FOUND
             assert result["detail"] == "import not found"

@@ -96,7 +96,6 @@ class ImportResult(UUIDBaseModel):
 
 class ArtifactPost(BaseModel):
     content_type: str | None = None
-    import_: Annotated[UUID, Field(alias="import")]
     source_uri: Annotated[AnyUrl | None, Field(alias="source-uri")] = None
 
 
