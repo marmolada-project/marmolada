@@ -7,26 +7,37 @@ from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, status
 from fastapi_pagination.cursor import CursorPage
 from fastapi_pagination.ext.sqlalchemy import paginate
 from pydantic import AnyUrl
-from sqlalchemy import select
+from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
 from ..database.model import Artifact, Import
 from . import schemas
 from .database import req_db_session
+from .imports import router as imports_router
 
 router = APIRouter(prefix="/artifacts")
 
 
+def _get_artifacts_query(import_uuid: UUID | None = None) -> Select:
+    query = select(Artifact).order_by(Artifact.created_at).options(selectinload(Artifact.import_))
+    if import_uuid:
+        query = query.filter_by(import_uuid=import_uuid)
+    return query
+
+
 @router.get("", response_model=CursorPage[schemas.ArtifactResult])
 async def get_artifacts(
-    db_session: Annotated[AsyncSession, Depends(req_db_session)],
-) -> list[Artifact]:
-    return await paginate(
-        db_session,
-        select(Artifact).order_by(Artifact.created_at).options(selectinload(Artifact.import_)),
-    )
+    db_session: Annotated[AsyncSession, Depends(req_db_session)]
+) -> CursorPage[Artifact]:
+    return await paginate(db_session, _get_artifacts_query())
+
+
+@imports_router.get("/{uuid}/artifacts", response_model=CursorPage[schemas.ArtifactResult])
+async def get_artifacts_for_import(
+    uuid: UUID, db_session: Annotated[AsyncSession, Depends(req_db_session)]
+) -> CursorPage[Artifact]:
+    return await paginate(db_session, _get_artifacts_query(uuid))
 
 
 @router.get("/{uuid}", response_model=schemas.ArtifactResult)
@@ -42,20 +53,20 @@ async def get_artifact(
     return artifact
 
 
-@router.post("", response_model=schemas.ArtifactResult, status_code=status.HTTP_201_CREATED)
-async def post_artifact(
+@imports_router.post(
+    "/{uuid}/artifacts", response_model=schemas.ArtifactResult, status_code=status.HTTP_201_CREATED
+)
+async def post_artifact_for_import(
     file: UploadFile,
-    import_uuid: Annotated[UUID, Query(alias="import")],
+    uuid: UUID,
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
     content_type: str | None = None,
     source_uri: Annotated[AnyUrl | None, Query(alias="source-uri")] = None,
 ) -> Artifact:
-    import_ = (
-        await db_session.execute(select(Import).filter_by(uuid=import_uuid))
-    ).scalar_one_or_none()
+    import_ = (await db_session.execute(select(Import).filter_by(uuid=uuid))).scalar_one_or_none()
 
     if not import_:
-        raise HTTPException(HTTP_422_UNPROCESSABLE_ENTITY, detail="import not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="import not found")
 
     artifact = Artifact(
         content_type=content_type,
@@ -74,11 +85,15 @@ async def post_artifact(
     return artifact
 
 
-@router.post(
-    "/from-local-file", response_model=schemas.ArtifactResult, status_code=status.HTTP_201_CREATED
+@imports_router.post(
+    "/{uuid}/artifacts/from-local-file",
+    response_model=schemas.ArtifactResult,
+    status_code=status.HTTP_201_CREATED,
 )
 async def post_artifact_from_local_file(
-    data: schemas.ArtifactPostLocal, db_session: Annotated[AsyncSession, Depends(req_db_session)]
+    uuid: UUID,
+    data: schemas.ArtifactPostLocal,
+    db_session: Annotated[AsyncSession, Depends(req_db_session)],
 ) -> Artifact:
     if (
         data.source_uri.scheme != "file"
@@ -86,16 +101,14 @@ async def post_artifact_from_local_file(
         or not await (local_path := AsyncPath(data.source_uri.path)).exists()
     ):
         raise HTTPException(
-            HTTP_422_UNPROCESSABLE_ENTITY,
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="source-uri must point to a local file on the server",
         )
 
-    import_ = (
-        await db_session.execute(select(Import).filter_by(uuid=data.import_))
-    ).scalar_one_or_none()
+    import_ = (await db_session.execute(select(Import).filter_by(uuid=uuid))).scalar_one_or_none()
 
     if not import_:
-        raise HTTPException(HTTP_422_UNPROCESSABLE_ENTITY, detail="import not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="import not found")
 
     artifact = Artifact(
         content_type=data.content_type,
