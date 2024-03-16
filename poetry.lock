@@ -1125,13 +1125,13 @@ testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtuale
 
 [[package]]
 name = "pytest-postgresql"
-version = "5.1.1"
+version = "6.0.0"
 description = "Postgresql fixtures and fixture factories for Pytest."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pytest-postgresql-5.1.1.tar.gz", hash = "sha256:edc1e83f65e9276bf465a983bfee98799866ee067defcee586ef6f889218e91f"},
-    {file = "pytest_postgresql-5.1.1-py3-none-any.whl", hash = "sha256:8e737e3e74a487717bc515605c2ea577aaf639548af7919f1086546e341acc7b"},
+    {file = "pytest-postgresql-6.0.0.tar.gz", hash = "sha256:6a4d8e600a2eef273f3c0e846cd0b2ea577282e252de29b4ca854bfb929bb682"},
+    {file = "pytest_postgresql-6.0.0-py3-none-any.whl", hash = "sha256:f14272bffad16a74d9a63f4cc828f243a12ae92995e236b68fd53154760e6a5a"},
 ]
 
 [package.dependencies]
@@ -1561,4 +1561,4 @@ tasks = ["SQLAlchemy", "celery", "psycopg2"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "4d6921b49ba6f09e49545269826c94752e1f6d6c6bc8c12377e7462b4978283f"
+content-hash = "f1c61c8267813be43eb73aeb1a69f6470ddb7699e9c4c501759010a3c8fb90aa"
