@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 from anyio import Path as AsyncPath
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from marmolada.core.configuration import config
 from marmolada.database.model import Artifact, Import
@@ -36,13 +36,13 @@ class TestArtifact(ModelTestBase):
         assert db_obj._path == f"incoming/{db_obj.import_.uuid!s}/{self.attrs['file_name']}"
 
     @pytest.mark.parametrize("test_type", (str, Path))
-    async def test_path_setter(self, test_type: type, db_obj: Artifact, db_session: Session):
+    async def test_path_setter(self, test_type: type, db_obj: Artifact, db_session: AsyncSession):
         old_path = db_obj.path
         db_obj.path = test_type(f"{old_path}/")
         await db_session.flush()
         assert db_obj.path == old_path
 
-    async def test_path_expression(self, db_obj: Artifact, db_session: Session):
+    async def test_path_expression(self, db_obj: Artifact, db_session: AsyncSession):
         selected_obj = (
             await db_session.execute(select(Artifact).filter_by(path=db_obj.path))
         ).scalar_one()
@@ -55,7 +55,7 @@ class TestArtifact(ModelTestBase):
     async def test_async_full_path(self, db_obj: Artifact):
         assert AsyncPath(config["artifacts"]["root"]) / db_obj.path == db_obj.async_full_path
 
-    async def test_rename(self, db_obj: Artifact, db_session: Session):
+    async def test_rename(self, db_obj: Artifact, db_session: AsyncSession):
         async with db_session.begin_nested():
             prev_path = db_obj.full_path
             db_obj.data = b"Foo"
@@ -86,7 +86,7 @@ class TestArtifact(ModelTestBase):
             "rollback",
         ),
     )
-    async def test_data_descriptor(self, testcase: str, db_obj: Artifact, db_session: Session):
+    async def test_data_descriptor(self, testcase: str, db_obj: Artifact, db_session: AsyncSession):
         artifacts_root = Path(config["artifacts"]["root"])
 
         if testcase == "dir-not-writable":
