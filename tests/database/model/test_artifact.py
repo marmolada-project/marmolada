@@ -18,6 +18,29 @@ def artifacts_root_unset_cache():
         yield
 
 
+class TestImport(ModelTestBase):
+    cls = Import
+
+    def test_complete_getter(self, db_obj: Import):
+        assert db_obj.complete is False
+
+    @pytest.mark.parametrize("testcase", ("set-complete", "unset-complete"))
+    def test_complete_setter(self, testcase: str, db_obj: Import):
+        unset_complete = "unset-complete" in testcase
+
+        db_obj.complete = True
+        if unset_complete:
+            with pytest.raises(ValueError):
+                db_obj.complete = False
+        assert db_obj._complete is True
+
+    async def test_complete_expression(self, db_session: AsyncSession, db_obj: Import):
+        result = (
+            (await db_session.execute(select(Import).filter_by(complete=False))).scalars().all()
+        )
+        assert db_obj in result
+
+
 @pytest.mark.marmolada_config({"artifacts": {"root": "doesn't matter"}})
 class TestArtifact(ModelTestBase):
     cls = Artifact
