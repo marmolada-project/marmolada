@@ -46,20 +46,36 @@ class TestImports:
             else:
                 assert import_.meta == {}
 
+    @pytest.mark.parametrize("success", (True, False), ids=("success", "failure"))
     async def test_put(
         self,
+        success: bool,
         client: AsyncClient,
         db_test_data_objs: dict[str, list[Base]],
         db_session: AsyncSession,
     ):
         import_ = db_test_data_objs["imports"][0]
+
+        if success:
+            # Import needs to be incomplete to set it to complete
+            desired_complete = True
+            async with db_session.begin():
+                import_._complete = False
+        else:
+            desired_complete = False
+
         resp = await client.put(
-            f"{base.API_PREFIX}/imports/{import_.uuid}", json={"complete": False}
+            f"{base.API_PREFIX}/imports/{import_.uuid}", json={"complete": desired_complete}
         )
-        assert resp.status_code == status.HTTP_200_OK
+
         result = resp.json()
-        assert result["complete"] is False
+        if success:
+            assert resp.status_code == status.HTTP_200_OK
+            assert result["complete"] is desired_complete
+        else:
+            assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            assert result["detail"] == "Completed import can’t be set incomplete."
 
         async with db_session.begin():
             await db_session.refresh(import_)
-            assert import_.complete is False
+            assert import_.complete is True
