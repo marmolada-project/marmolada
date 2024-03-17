@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.cursor import CursorPage
 from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy import select
@@ -65,7 +65,10 @@ async def put_import(
     ).scalar_one()
 
     for key, value in data:
-        setattr(import_, key, value)
+        try:
+            setattr(import_, key, value)
+        except ValueError as exc:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
 
     await db_session.commit()
 
