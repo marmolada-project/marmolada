@@ -10,7 +10,14 @@ from anyio import Path as AsyncPath
 from sqlalchemy import ForeignKey, event
 from sqlalchemy.engine.default import DefaultExecutionContext
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapped, Session, mapped_column, object_session, relationship
+from sqlalchemy.orm import (
+    Mapped,
+    QueryableAttribute,
+    Session,
+    mapped_column,
+    object_session,
+    relationship,
+)
 from sqlalchemy.sql import SQLColumnExpression
 
 from ...core.configuration import config
@@ -24,8 +31,22 @@ class Import(Base, UuidPrimaryKey, Creatable, Updatable):
     __tablename__ = "imports"
 
     meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
-    complete: Mapped[bool] = mapped_column(default=False)
+    _complete: Mapped[bool] = mapped_column("complete", default=False)
     artifacts: Mapped[set["Artifact"]] = relationship(back_populates="import_")
+
+    @hybrid_property
+    def complete(self) -> bool:
+        return self._complete
+
+    @complete.setter
+    def complete(self, value: bool) -> None:
+        if self._complete and not value:
+            raise ValueError("Completed import can’t be set incomplete.")
+        self._complete = value
+
+    @complete.expression
+    def complete(cls) -> QueryableAttribute:
+        return cls._complete
 
 
 def _artifact_path_default(context: DefaultExecutionContext) -> str:
