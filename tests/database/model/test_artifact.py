@@ -130,6 +130,7 @@ class TestArtifact(ModelTestBase):
         else:  # testcase in ("normal", "dir-doesnt-exist", "delete", "rewrite-fails", "rollback")
             db_obj.data = b"Foo"
             assert db_obj.data == b"Foo"
+            assert db_obj.content_type == "text/plain"
 
         if testcase == "delete":
             del db_obj.data
