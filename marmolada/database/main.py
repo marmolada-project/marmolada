@@ -34,7 +34,7 @@ class Base(DeclarativeBase):
     type_annotation_map = type_annotation_map
 
 
-session_maker = sessionmaker(class_=AsyncSession, expire_on_commit=False, future=True)
+session_maker: AsyncSession = sessionmaker(class_=AsyncSession, expire_on_commit=False, future=True)
 
 
 def init_model(engine: AsyncEngine = None) -> None:
