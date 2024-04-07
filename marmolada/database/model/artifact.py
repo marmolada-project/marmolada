@@ -6,6 +6,7 @@ from collections import defaultdict
 from typing import Any, ClassVar
 from uuid import UUID
 
+import magic
 from anyio import Path as AsyncPath
 from sqlalchemy import ForeignKey, event
 from sqlalchemy.engine.default import DefaultExecutionContext
@@ -25,6 +26,8 @@ from .. import Base
 from ..mixins import Creatable, Updatable, UuidPrimaryKey
 
 log = logging.getLogger(__name__)
+mime = magic.open(magic.MAGIC_MIME_TYPE)
+mime.load()
 
 
 class Import(Base, UuidPrimaryKey, Creatable, Updatable):
@@ -125,6 +128,7 @@ class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
 
         with os.fdopen(os.open(self.full_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY), "wb") as fp:
             fp.write(data)
+            self.content_type = mime.buffer(data)
 
         self._sessions_added_files[object_session(self)].add(self.full_path)
 
