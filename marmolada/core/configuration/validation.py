@@ -17,6 +17,10 @@ class LogLevel(str, Enum):
 
 AmqpRpcDsn = Annotated[AnyUrl, UrlConstraints(host_required=False, allowed_schemes=("rpc",))]
 
+PostgreSQLDsn = Annotated[
+    AnyUrl, UrlConstraints(allowed_schemes=["postgresql"], host_required=False)
+]
+
 
 # Pydantic models
 
@@ -31,7 +35,7 @@ class TasksModel(BaseModel):
 
 
 class SQLAlchemyModel(BaseModel):
-    url: Annotated[AnyUrl, UrlConstraints(host_required=False)]
+    url: PostgreSQLDsn
 
 
 class DatabaseModel(BaseModel):
