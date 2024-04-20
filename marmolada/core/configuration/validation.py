@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Annotated, Literal
 
-from pydantic import AmqpDsn, AnyUrl, BaseModel, Field, RedisDsn, UrlConstraints
+from pydantic import AnyUrl, BaseModel, Field, UrlConstraints
 
 # types
 
@@ -15,8 +15,6 @@ class LogLevel(str, Enum):
     critical = "critical"
 
 
-AmqpRpcDsn = Annotated[AnyUrl, UrlConstraints(host_required=False, allowed_schemes=("rpc",))]
-
 PostgreSQLDsn = Annotated[
     AnyUrl, UrlConstraints(allowed_schemes=["postgresql"], host_required=False)
 ]
@@ -25,13 +23,29 @@ PostgreSQLDsn = Annotated[
 # Pydantic models
 
 
-class CeleryModel(BaseModel):
-    broker_url: AmqpDsn | RedisDsn
-    result_backend: AmqpRpcDsn | RedisDsn
+class ArqRedisSettings(BaseModel):
+    host: str = "localhost"
+    port: int = 6379
+
+
+class ArqWorkerSettings(BaseModel):
+    queue_name: str = "marmolada.tasks"
+    max_jobs: int | None = None
+    job_timeout: int | float = 300
+    poll_delay: int | float = 0.5
+    queue_read_limit: int | None = None
+    max_tries: int = 5
+    health_check_interval: int = 3600
+    health_check_key: str | None = None
+
+
+class ArqModel(BaseModel):
+    redis_settings: ArqRedisSettings | None = ArqRedisSettings()
+    worker_settings: ArqWorkerSettings | None = ArqWorkerSettings()
 
 
 class TasksModel(BaseModel):
-    celery: CeleryModel
+    arq: ArqModel
 
 
 class SQLAlchemyModel(BaseModel):
