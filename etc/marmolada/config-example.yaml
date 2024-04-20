@@ -11,6 +11,19 @@ artifacts:
   root: "/var/lib/marmolada/artifacts"
 
 tasks:
-  celery:
-    broker_url: "amqp://marmolada:marmolada@localhost:5672/marmolada"
-    result_backend: "rpc://"
+  arq:
+    redis_settings:
+      # host: "localhost"
+      # port: 6379
+    worker_settings:
+      # queue_name: "marmolada.tasks"
+      # max_jobs: <number of CPUs>
+      # job_timeout: 300  # max runtime (s)
+      # poll_delay: 0.5  # duration between polling the queue for new jobs (s)
+      # queue_read_limit:  # the maximum number of jobs to pull from the queue
+      #                    # each time it’s polled. By default it equals
+      #                    # max_jobs * 5, or 100; whichever is higher.
+      # max_tries: 5  # default maximum number of times to retry a job
+      # health_check_interval: 3600  # how often to set the health check key
+      # health_check_key: "<queue_name>:health-check"
+      #                      # redis key under which health check is set
