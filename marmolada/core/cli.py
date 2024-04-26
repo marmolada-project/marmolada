@@ -1,3 +1,4 @@
+import logging
 from importlib.metadata import entry_points
 from pathlib import Path
 
@@ -33,3 +34,5 @@ def cli(ctx: click.Context, config_paths: tuple[Path], debug: bool):
             pass
     else:
         configuration.read_configuration(*config_paths, clear=True, validate=True)
+
+    logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
