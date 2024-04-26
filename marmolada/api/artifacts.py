@@ -57,10 +57,9 @@ async def get_artifact(
     "/{uuid}/artifacts", response_model=schemas.ArtifactResult, status_code=status.HTTP_201_CREATED
 )
 async def post_artifact_for_import(
-    file: UploadFile,
     uuid: UUID,
+    file: UploadFile,
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
-    content_type: str | None = None,
     source_uri: Annotated[AnyUrl | None, Query(alias="source-uri")] = None,
 ) -> Artifact:
     import_ = (await db_session.execute(select(Import).filter_by(uuid=uuid))).scalar_one_or_none()
@@ -69,7 +68,6 @@ async def post_artifact_for_import(
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="import not found")
 
     artifact = Artifact(
-        content_type=content_type,
         import_=import_,
         source_uri=str(source_uri) if source_uri else None,
         file_name=file.filename,
