@@ -88,7 +88,7 @@ async def post_artifact_for_import(
     response_model=schemas.ArtifactResult,
     status_code=status.HTTP_201_CREATED,
 )
-async def post_artifact_from_local_file(
+async def post_artifact_for_import_from_local_file(
     uuid: UUID,
     data: schemas.ArtifactPostLocal,
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
