@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from ..database.model import Import
+from ..tasks.base import ArqRedis, get_task_pool
 from . import schemas
 from .database import req_db_session
 
@@ -57,6 +58,7 @@ async def put_import(
     uuid: UUID,
     data: schemas.ImportPatch,
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
+    task_pool: Annotated[ArqRedis, Depends(get_task_pool)],
 ) -> Import:
     import_ = (
         await db_session.execute(
@@ -64,12 +66,19 @@ async def put_import(
         )
     ).scalar_one()
 
+    old_complete = import_.complete
+
     for key, value in data:
         try:
             setattr(import_, key, value)
         except ValueError as exc:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
 
+    new_complete = import_.complete
+
     await db_session.commit()
+
+    if not old_complete and new_complete:
+        await task_pool.enqueue_job("process_import", import_.uuid)
 
     return import_
