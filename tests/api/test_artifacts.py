@@ -61,6 +61,7 @@ class TestArtifacts:
         tmp_path: Path,
         client: AsyncClient,
         db_session: AsyncSession,
+        mock_task_pool: mock.AsyncMock,
     ):
         from_upload = "from-upload" in testcase
         import_exists = "import-missing" not in testcase
@@ -117,6 +118,7 @@ class TestArtifacts:
             if wrong_uri_host or wrong_uri_scheme or local_path_missing:
                 assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
                 assert result["detail"] == "source-uri must point to a local file on the server"
+                mock_task_pool.enqueue_job.assert_not_awaited()
             else:
                 assert resp.status_code == status.HTTP_201_CREATED
 
@@ -133,6 +135,11 @@ class TestArtifacts:
                         assert artifact.full_path.stat().st_nlink == 1
                     else:
                         assert artifact.full_path.stat().st_nlink == 2
+
+                mock_task_pool.enqueue_job.assert_awaited_once_with(
+                    "process_artifact", artifact.uuid
+                )
         else:
             assert resp.status_code == status.HTTP_404_NOT_FOUND
             assert result["detail"] == "import not found"
+            mock_task_pool.enqueue_job.assert_not_awaited()

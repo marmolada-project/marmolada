@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 from fastapi import status
 from httpx import AsyncClient
@@ -46,23 +48,31 @@ class TestImports:
             else:
                 assert import_.meta == {}
 
-    @pytest.mark.parametrize("success", (True, False), ids=("success", "failure"))
+    @pytest.mark.parametrize(
+        "testcase", ("success-happy-path", "success-noop", "failure-cant-uncomplete")
+    )
     async def test_put(
         self,
-        success: bool,
+        testcase: str,
         client: AsyncClient,
         db_test_data_objs: dict[str, list[Base]],
         db_session: AsyncSession,
+        mock_task_pool: mock.AsyncMock,
     ):
         import_ = db_test_data_objs["imports"][0]
 
+        success = "success" in testcase
+        noop = "noop" in testcase
+        cant_uncomplete = "cant-uncomplete" in testcase
+        expected_import_complete = success and not noop or cant_uncomplete
+
+        desired_complete = False
         if success:
-            # Import needs to be incomplete to set it to complete
-            desired_complete = True
+            if not noop:
+                # Import needs to be incomplete to set it to complete
+                desired_complete = True
             async with db_session.begin():
                 import_._complete = False
-        else:
-            desired_complete = False
 
         resp = await client.put(
             f"{base.API_PREFIX}/imports/{import_.uuid}", json={"complete": desired_complete}
@@ -72,10 +82,15 @@ class TestImports:
         if success:
             assert resp.status_code == status.HTTP_200_OK
             assert result["complete"] is desired_complete
+            if noop:
+                mock_task_pool.enqueue_job.assert_not_awaited()
+            else:
+                mock_task_pool.enqueue_job.assert_awaited_once_with("process_import", import_.uuid)
         else:
             assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
             assert result["detail"] == "Completed import can’t be set incomplete."
+            mock_task_pool.enqueue_job.assert_not_awaited()
 
         async with db_session.begin():
             await db_session.refresh(import_)
-            assert import_.complete is True
+            assert import_.complete is expected_import_complete
