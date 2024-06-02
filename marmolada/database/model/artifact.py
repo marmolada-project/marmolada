@@ -3,7 +3,7 @@ import logging
 import os
 import pathlib
 from collections import defaultdict
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 from uuid import UUID
 
 import magic
@@ -25,6 +25,9 @@ from ...core.configuration import config
 from .. import Base
 from ..mixins import Creatable, Updatable, UuidPrimaryKey
 
+if TYPE_CHECKING:
+    from .task import ArtifactTask, ImportTask
+
 log = logging.getLogger(__name__)
 mime = magic.open(magic.MAGIC_MIME_TYPE)
 mime.load()
@@ -36,6 +39,8 @@ class Import(Base, UuidPrimaryKey, Creatable, Updatable):
     meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
     _complete: Mapped[bool] = mapped_column("complete", default=False)
     artifacts: Mapped[set["Artifact"]] = relationship(back_populates="import_")
+
+    tasks: Mapped[set["ImportTask"]] = relationship(back_populates="import_")
 
     @hybrid_property
     def complete(self) -> bool:
@@ -79,6 +84,8 @@ class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
 
     source_uri: Mapped[str | None]
     file_name: Mapped[str]
+
+    tasks: Mapped[set["ArtifactTask"]] = relationship(back_populates="artifact")
 
     def __new__(cls, *args: tuple[Any], **kwargs: dict[str, Any]) -> "Artifact":
         if not Artifact.artifacts_root:

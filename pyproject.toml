@@ -50,6 +50,9 @@ marmolada = "marmolada.core.cli:cli"
 "database" = "marmolada.database.cli:database"
 "tasks" = "marmolada.tasks.cli:tasks"
 
+[tool.poetry.plugins."marmolada.tasks"]
+"test" = "marmolada.tasks.plugins.test"
+
 [tool.pytest.ini_options]
 addopts = "--cov --cov-config .coveragerc --cov-report term --cov-report xml --cov-report html"
 asyncio_mode = "auto"
