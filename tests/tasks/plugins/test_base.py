@@ -157,10 +157,12 @@ class TestTaskPluginManager:
             assert plugin_issue in caplog.text
 
     @pytest.mark.parametrize("scope", ("artifact", "import"))
-    async def test_process_scope(self, scope, plugin_objs, mgr, capsys):
+    async def test_process_scope(self, scope, plugin_objs, mgr, capsys, caplog):
         mgr.discover_plugins()
 
         uuid = uuid4()
+
+        caplog.clear()
 
         with mock.patch("marmolada.tasks.plugins.base.session_maker") as session_maker:
             session_maker.return_value = ctxmgr = mock.MagicMock(AbstractAsyncContextManager)
@@ -168,14 +170,6 @@ class TestTaskPluginManager:
             await mgr.process_scope(scope, uuid)
 
         added_db_objs = [call[0][0] for call in db_session.add.call_args_list]
-
-        match scope:
-            case "artifact":
-                assert all(isinstance(obj, model.ArtifactTask) for obj in added_db_objs)
-                assert [o.name for o in added_db_objs] == ["test1", "test3", "test2"]
-            case "import":
-                assert all(isinstance(obj, model.ImportTask) for obj in added_db_objs)
-                assert [o.name for o in added_db_objs] == ["test1", "test2"]
 
         out, err = capsys.readouterr()
 
@@ -192,6 +186,20 @@ class TestTaskPluginManager:
             ]
 
         assert out.strip().split("\n") == expected_output
+
+        match scope:
+            case "artifact":
+                assert all(isinstance(obj, model.ArtifactTask) for obj in added_db_objs)
+                assert [o.name for o in added_db_objs] == ["test1", "test3", "test2"]
+
+                assert f"Task plugin artifact/test4[{uuid}] raised exception" in caplog.messages
+                assert (
+                    f"Skipping plugin artifact/test5[{uuid}] due to unfulfilled deps: test4"
+                    in caplog.messages
+                )
+            case "import":
+                assert all(isinstance(obj, model.ImportTask) for obj in added_db_objs)
+                assert [o.name for o in added_db_objs] == ["test1", "test2"]
 
     async def test_process_scope_without_discovery(self, mgr):
         with pytest.raises(
