@@ -1,7 +1,9 @@
 from enum import Enum
+from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import AnyUrl, BaseModel, Field, UrlConstraints
+from pydantic import AnyUrl, BaseModel, ConfigDict, Field, UrlConstraints
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
 
 # types
 
@@ -56,11 +58,14 @@ class DatabaseModel(BaseModel):
     sqlalchemy: SQLAlchemyModel
 
 
+class ArtifactsModel(BaseModel):
+    root: Path
+
+
 class LoggingModel(BaseModel):
     version: Literal[1]
 
-    class Config:
-        extra = "allow"
+    model_config = ConfigDict(extra="allow")
 
 
 class APIModel(BaseModel):
@@ -70,7 +75,21 @@ class APIModel(BaseModel):
     logging: LoggingModel | None = None
 
 
-class ConfigModel(BaseModel):
+class ConfigModel(BaseSettings):
     api: APIModel | None = None
+    artifacts: ArtifactsModel | None = None
     database: DatabaseModel | None = None
     tasks: TasksModel | None = None
+
+    model_config = SettingsConfigDict(env_prefix="marmolada_", env_nested_delimiter="__")
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
+        return env_settings, dotenv_settings, init_settings, file_secret_settings

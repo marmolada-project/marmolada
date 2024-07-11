@@ -1,6 +1,8 @@
+import os
 from collections.abc import Iterator
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from unittest import mock
 
 import psycopg
 import pytest
@@ -56,42 +58,57 @@ def marmolada_config_files(
     for node in request.node.listchain():
         for marker in node.own_markers:
             if marker.name == "marmolada_config":
-                if marker.kwargs.get("clear"):
-                    configs = []
                 objtype = marker.kwargs.get("objtype", Path)
-                assert objtype in (Path, str)
+                assert objtype in (Path, str, "env")
+
+                if marker.kwargs.get("clear"):
+                    configs = [(objtype, {})]
+
                 if marker.kwargs.get("example_config"):
                     configs.append((objtype, EXAMPLE_CONFIG_SENTINEL))
+
                 for content in marker.args:
                     assert any(isinstance(content, t) for t in (dict, str))
+                    if objtype == "env" and isinstance(content, str):
+                        assert "=" in content
                     configs.append((objtype, content))
 
-    # Create configuration files.
+    # Create configuration files and environment.
     config_file_paths = []  # their Path or str counterparts
-    for objtype, content in configs:
-        if content is EXAMPLE_CONFIG_SENTINEL:
-            config_file_paths.append(EXAMPLE_CONFIG.absolute())
-            continue
+    with mock.patch.dict(os.environ):
+        for objtype, content in configs:
+            if content is EXAMPLE_CONFIG_SENTINEL:
+                config_file_paths.append(EXAMPLE_CONFIG.absolute())
+                continue
 
-        config_file_obj = NamedTemporaryFile(
-            mode="w",
-            encoding="utf-8",
-            suffix=".yaml",
-            prefix="tmp_marmolada_test_config",
-            delete=False,
-        )
-        if isinstance(content, dict):
-            yaml.dump(content, stream=config_file_obj)
-        else:
-            print(content, file=config_file_obj)
-        config_file_obj.close()
-        config_file_paths.append(objtype(config_file_obj.name))
+            if objtype == "env":
+                if isinstance(content, str):
+                    key, value = content.split("=", 1)
+                    if not key.startswith("MARMOLADA_"):
+                        key = f"MARMOLADA_{key}"
+                    os.environ[key] = value
 
-    if not config_file_paths:
-        config_file_paths = [EXAMPLE_CONFIG.absolute()]
+                continue
 
-    # Let tests work with the configuration files.
-    yield config_file_paths
+            config_file_obj = NamedTemporaryFile(
+                mode="w",
+                encoding="utf-8",
+                suffix=".yaml",
+                prefix="tmp_marmolada_test_config",
+                delete=False,
+            )
+            if isinstance(content, dict):
+                yaml.dump(content, stream=config_file_obj)
+            else:
+                print(content, file=config_file_obj)
+            config_file_obj.close()
+            config_file_paths.append(objtype(config_file_obj.name))
+
+        if not config_file_paths:
+            config_file_paths = [EXAMPLE_CONFIG.absolute()]
+
+        # Let tests work with the configuration files.
+        yield config_file_paths
 
 
 @pytest.fixture(autouse=True)
@@ -111,7 +128,7 @@ def marmolada_config(marmolada_config_files, tmp_path, request):
             if marker.name == "marmolada_config":
                 tweak_for_tests = marker.kwargs.get("tweak_for_tests", tweak_for_tests)
     if tweak_for_tests:
-        if "artifacts" in config:
+        if isinstance(config.get("artifacts"), dict):
             test_artifacts_root = tmp_path / "test_artifacts"
             test_artifacts_root.mkdir()
             config["artifacts"]["root"] = str(test_artifacts_root)
