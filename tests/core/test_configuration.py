@@ -14,27 +14,25 @@ EXAMPLE_CONFIG = {"api": {"host": "127.0.0.1", "port": 8080}}
 class TestConfiguration:
     @pytest.mark.parametrize("objtype", (str, Path))
     def test__expand_normalize_config_files(self, objtype, tmp_path, marmolada_config_files):
-        (config_file,) = marmolada_config_files
-
         sub_file1 = tmp_path / "sub_file1.yaml"
         sub_file1.touch()
 
         sub_file2 = tmp_path / "sub_file2.yaml"
         sub_file2.touch()
 
-        config_files = [config_file, tmp_path]
+        config_files = [*marmolada_config_files, tmp_path]
         expanded_config_files = main._expand_normalize_config_files(
             [objtype(f) for f in config_files]
         )
 
-        assert expanded_config_files == [config_file, sub_file1, sub_file2]
+        assert expanded_config_files == [*marmolada_config_files, sub_file1, sub_file2]
 
     @pytest.mark.marmolada_config(tweak_for_tests=False)
     @pytest.mark.parametrize("clear", (True, False))
-    def test_read_configuration_clear(self, clear):
+    def test_read_configuration_clear(self, clear, marmolada_config_files):
         main.read_configuration(clear=clear)
         if clear:
-            assert main.config == {}
+            assert all(value is None for value in main.config.values())
         else:
             assert main.config == EXAMPLE_CONFIG
 
@@ -67,3 +65,7 @@ class TestConfiguration:
         main.read_configuration(partial_config_file, clear=True, validate=False)
         main.read_configuration(*marmolada_config_files, clear=False, validate=False)
         main.read_configuration(clear=False, validate=True)
+
+    @pytest.mark.marmolada_config("API__HOST=BOO", objtype="env", clear=True)
+    def test_read_configuration_from_env(self, marmolada_config_files):
+        assert main.config["api"]["host"] == "BOO"

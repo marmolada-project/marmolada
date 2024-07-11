@@ -35,6 +35,10 @@ def read_configuration(*config_files: list[Path | str], clear: bool = True, vali
         # validate merged configuration
         ConfigModel(**new_config)
 
+    new_config = merge_dicts(
+        new_config, ConfigModel().model_dump(exclude_unset=True, exclude_defaults=True)
+    )
+
     if clear:
         config.clear()
 
