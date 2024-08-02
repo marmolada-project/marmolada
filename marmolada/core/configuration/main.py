@@ -23,7 +23,7 @@ def _expand_normalize_config_files(config_files: list[Path | str]) -> list[Path]
     return config_file_paths
 
 
-def read_configuration(*config_files: list[Path | str], clear: bool = True, validate: bool = True):
+def read_configuration(*config_files: list[Path | str]):
     config_files = _expand_normalize_config_files(config_files)
     new_config = {}
     for config_file in config_files:
@@ -31,15 +31,9 @@ def read_configuration(*config_files: list[Path | str], clear: bool = True, vali
             for config_doc in yaml.safe_load_all(fp):
                 new_config = merge_dicts(new_config, config_doc)
 
-    if validate:
-        # validate merged configuration
-        ConfigModel(**new_config)
-
-    new_config = merge_dicts(
-        new_config, ConfigModel().model_dump(exclude_unset=True, exclude_defaults=True)
+    new_config = ConfigModel.model_validate(new_config).model_dump(
+        exclude_unset=True, exclude_defaults=True, mode="json"
     )
 
-    if clear:
-        config.clear()
-
+    config.clear()
     config.update(new_config)

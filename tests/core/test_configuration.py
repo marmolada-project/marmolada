@@ -2,7 +2,6 @@ import copy
 from pathlib import Path
 
 import pytest
-import yaml
 
 from marmolada.core.configuration import main
 from marmolada.core.util import merge_dicts
@@ -28,13 +27,9 @@ class TestConfiguration:
         assert expanded_config_files == [*marmolada_config_files, sub_file1, sub_file2]
 
     @pytest.mark.marmolada_config(tweak_for_tests=False)
-    @pytest.mark.parametrize("clear", (True, False))
-    def test_read_configuration_clear(self, clear, marmolada_config_files):
-        main.read_configuration(clear=clear)
-        if clear:
-            assert all(value is None for value in main.config.values())
-        else:
-            assert main.config == EXAMPLE_CONFIG
+    def test_read_configuration_clear(self, marmolada_config_files):
+        main.read_configuration()
+        assert all(value is None for value in main.config.values())
 
     @pytest.mark.marmolada_config({}, objtype=str, clear=False)
     def test_read_configuration_str(self, marmolada_config_files):
@@ -55,16 +50,6 @@ class TestConfiguration:
     @pytest.mark.marmolada_config({"api": {}})
     def test_read_configuration_partial(self, marmolada_config_files, tmp_path):
         assert main.config == EXAMPLE_CONFIG
-
-    @pytest.mark.marmolada_config(example_config=True, clear=True)
-    def test_read_configuration_partial_validate_post(self, marmolada_config_files, tmp_path):
-        partial_config_file = tmp_path / "partial-config.yaml"
-        with partial_config_file.open("w") as fp:
-            yaml.dump({"metaclient": {}}, fp)
-
-        main.read_configuration(partial_config_file, clear=True, validate=False)
-        main.read_configuration(*marmolada_config_files, clear=False, validate=False)
-        main.read_configuration(clear=False, validate=True)
 
     @pytest.mark.marmolada_config("API__HOST=BOO", objtype="env", clear=True)
     def test_read_configuration_from_env(self, marmolada_config_files):
