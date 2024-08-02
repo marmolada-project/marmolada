@@ -119,7 +119,7 @@ def marmolada_config(marmolada_config_files, tmp_path, request):
     @pytest.mark.marmolada_config(...) (see marmolada_config_files) and applies
     them in marmolada.core.configuration.config.
     """
-    read_configuration(*marmolada_config_files, clear=True)
+    read_configuration(*marmolada_config_files)
 
     # Optionally, override artifacts root path with a temporary, empty one for tests.
     tweak_for_tests = True
