@@ -409,7 +409,7 @@ tortoise = ["tortoise-orm (>=0.16.18,!=0.21.0,<0.22.0)"]
 name = "file-magic"
 version = "0.4.1"
 description = "Python front end for libmagic(3)"
-optional = true
+optional = false
 python-versions = ">=2.7"
 files = [
     {file = "file-magic-0.4.1.tar.gz", hash = "sha256:a91d1483117f7ed48cd0238ad9be36b04824d57e9c38ea7523113989e81b9c53"},
@@ -1596,11 +1596,11 @@ docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.2,!=7.3)", "s
 test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=23.1)", "pytest (>=7.4)", "pytest-env (>=0.8.2)", "pytest-freezer (>=0.4.8)", "pytest-mock (>=3.11.1)", "pytest-randomly (>=3.12)", "pytest-timeout (>=2.1)", "setuptools (>=68)", "time-machine (>=2.10)"]
 
 [extras]
-api = ["SQLAlchemy", "anyio", "arq", "asyncpg", "fastapi", "fastapi-pagination", "file-magic", "greenlet", "python-multipart", "uvicorn"]
+api = ["SQLAlchemy", "arq", "asyncpg", "fastapi", "fastapi-pagination", "greenlet", "python-multipart", "uvicorn"]
 database = ["SQLAlchemy", "alembic", "asyncpg", "greenlet", "psycopg2"]
 tasks = ["SQLAlchemy", "arq", "asyncpg", "psycopg2"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "76941dbc15fc055d0ae1c442d43d6c96d10ce7017424acdcd1183db1b0e9894c"
+content-hash = "79aa408bac45550dc517d21bf398443b4b4db81e2edd640fa88d9f2a464b335c"
