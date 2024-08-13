@@ -14,17 +14,20 @@ from .main import metadata
 HERE = Path(__file__).parent
 
 
-def setup_db_schema() -> None:
+def setup_db_schema(existing_ok: bool = False) -> None:
     engine = create_engine(**config["database"]["sqlalchemy"])
 
     inspection_result = inspect(engine)
 
-    present_tables = sorted(n for n in metadata.tables if inspection_result.has_table(n))
+    present_tables = sorted(inspection_result.get_table_names())
 
     if present_tables:
-        print(f"Tables already present: {', '.join(present_tables)}", file=sys.stderr)
-        print("Refusing to change database schema.", file=sys.stderr)
-        sys.exit(1)
+        print(
+            f"Tables already present: {', '.join(present_tables)}\n"
+            + "Refusing to change database schema.",
+            file=sys.stdout if existing_ok else sys.stderr,
+        )
+        sys.exit(0 if existing_ok else 1)
 
     with engine.begin():
         print("Creating database schema")
