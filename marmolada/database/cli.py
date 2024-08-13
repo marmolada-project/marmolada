@@ -10,9 +10,14 @@ def database() -> None:
 
 
 @database.command()
-def setup() -> None:
+@click.option(
+    "--existing-ok/--existing-fatal",
+    default=False,
+    help="If tables existing in the database should cause a non-zero exit code.",
+)
+def setup(existing_ok: bool) -> None:
     """Create tables from the database model."""
-    setup_db_schema()
+    setup_db_schema(existing_ok=existing_ok)
 
 
 @database.group()

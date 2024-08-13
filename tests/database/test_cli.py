@@ -10,7 +10,7 @@ def test_setup(setup_db_schema, cli_runner):
 
     assert result.exit_code == 0
 
-    setup_db_schema.assert_called_once_with()
+    setup_db_schema.assert_called_once_with(existing_ok=False)
 
 
 @mock.patch.object(cli, "alembic_migration")
