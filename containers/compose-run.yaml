@@ -1,0 +1,60 @@
+name: marmolada
+
+volumes:
+  pgsql-data:
+  redis:
+  artifacts:
+
+services:
+  db:
+    image: quay.io/fedora/postgresql-16
+    environment:
+      - POSTGRESQL_USER=marmolada
+      - POSTGRESQL_PASSWORD=marmolada
+      - POSTGRESQL_DATABASE=marmolada
+    volumes:
+      - pgsql-data:/var/lib/pgsql/data
+
+  redis:
+    image: quay.io/fedora/redis-7
+    volumes:
+      - redis:/var/lib/redis/data
+
+  api:
+    image: localhost/marmolada_api:latest
+    command:
+      # depends -> ... -> condition: service_healthy doesn’t work properly, just wait a little
+      - sh
+      - -c
+      - sleep 1; exec poetry run marmolada api serve
+    environment:
+      marmolada_api__host: 0.0.0.0
+      marmolada_database__sqlalchemy__url: postgresql://marmolada:marmolada@db/marmolada # notsecret
+      marmolada_tasks__arq__redis_settings__host: redis
+    ports:
+      - 127.0.0.1:8080:8080
+    volumes:
+      artifacts:/var/lib/marmolada/artifacts
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  tasks:
+    image: localhost/marmolada_tasks:latest
+    command:
+      # depends -> ... -> condition: service_healthy doesn’t work properly, just wait a little
+      - sh
+      - -c
+      - sleep 1; exec poetry run marmolada tasks serve
+    environment:
+      marmolada_database__sqlalchemy__url: postgresql://marmolada:marmolada@db/marmolada # notsecret
+      marmolada_tasks__arq__redis_settings__host: redis
+    volumes:
+      artifacts:/var/lib/marmolada/artifacts
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
