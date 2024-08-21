@@ -1341,13 +1341,13 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "73.0.0"
+version = "73.0.1"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "setuptools-73.0.0-py3-none-any.whl", hash = "sha256:f2bfcce7ae1784d90b04c57c2802e8649e1976530bb25dc72c2b078d3ecf4864"},
-    {file = "setuptools-73.0.0.tar.gz", hash = "sha256:3c08705fadfc8c7c445cf4d98078f0fafb9225775b2b4e8447e40348f82597c0"},
+    {file = "setuptools-73.0.1-py3-none-any.whl", hash = "sha256:b208925fcb9f7af924ed2dc04708ea89791e24bde0d3020b27df0e116088b34e"},
+    {file = "setuptools-73.0.1.tar.gz", hash = "sha256:d59a3e788ab7e012ab2c4baed1b376da6366883ee20d7a5fc426816e3d7b1193"},
 ]
 
 [package.extras]
@@ -1379,13 +1379,13 @@ files = [
 
 [[package]]
 name = "sqlakeyset"
-version = "2.0.1721705501"
+version = "2.0.1724199169"
 description = "offset-free paging for sqlalchemy"
 optional = true
 python-versions = "<4.0,>=3.7"
 files = [
-    {file = "sqlakeyset-2.0.1721705501-py3-none-any.whl", hash = "sha256:3a5a0197de92135dfbb1b4d3546ee9f99437e4897b688df5dcab34d2793fdad6"},
-    {file = "sqlakeyset-2.0.1721705501.tar.gz", hash = "sha256:956d8afbbe7622f3ff7f9865a56b7be69c4c5c1bd91ceb67a7b76794c59dff68"},
+    {file = "sqlakeyset-2.0.1724199169-py3-none-any.whl", hash = "sha256:f9a2048bc52c71a6afdbc3574f1ec20d2d13de9894fe1c794dd29d621bf44c97"},
+    {file = "sqlakeyset-2.0.1724199169.tar.gz", hash = "sha256:e11212531fe8ac1a04ce7735e332ba9c6f597520a23bd72b4812d973da718570"},
 ]
 
 [package.dependencies]
