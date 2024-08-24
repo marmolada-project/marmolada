@@ -161,12 +161,21 @@ class TestTaskPluginManager:
         mgr.discover_plugins()
 
         uuid = uuid4()
+        match scope:
+            case "artifact":
+                scoped_obj = model.Artifact(uuid=uuid)
+            case "import":
+                scoped_obj = model.Import(uuid=uuid)
 
         caplog.clear()
 
         with mock.patch("marmolada.tasks.plugins.base.session_maker") as session_maker:
             session_maker.return_value = ctxmgr = mock.MagicMock(AbstractAsyncContextManager)
-            db_session = ctxmgr.__aenter__.return_value = mock.Mock()
+            db_session = ctxmgr.__aenter__.return_value = mock.AsyncMock()
+            db_session.add = mock.Mock()
+            db_session.execute.return_value = query_result = mock.Mock()
+            query_result.one.return_value = scoped_obj
+
             await mgr.process_scope(scope, uuid)
 
         added_db_objs = [call[0][0] for call in db_session.add.call_args_list]

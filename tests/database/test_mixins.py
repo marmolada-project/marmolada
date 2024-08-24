@@ -9,7 +9,7 @@ from marmolada.database import mixins
 from marmolada.database.main import Base
 
 
-class Thing(Base, mixins.UuidPrimaryKey, mixins.Creatable, mixins.Updatable):
+class Thing(Base, mixins.BigIntPrimaryKey, mixins.UuidAltKey, mixins.Creatable, mixins.Updatable):
     __tablename__ = "things"
 
     something: Mapped[int] = mapped_column(nullable=True)
@@ -35,26 +35,24 @@ async def test_updating(db_session):
     then = dt.datetime.now(dt.UTC)
 
     async with db_session.begin():
-        thing = await db_session.get(Thing, thing.uuid, with_for_update=True)
+        thing = await db_session.get(Thing, thing.id, with_for_update=True)
         thing.something = 5
 
     then_again = dt.datetime.now(dt.UTC)
 
     async with db_session.begin():
-        thing = await db_session.get(
-            Thing, thing.uuid, populate_existing=True, with_for_update=True
-        )
+        thing = await db_session.get(Thing, thing.id, populate_existing=True, with_for_update=True)
         assert then <= thing.updated_at <= then_again
         thing.something = 6
 
     then_again_and_later = dt.datetime.now(dt.UTC)
 
     async with db_session.begin():
-        thing = await db_session.get(Thing, thing.uuid, populate_existing=True)
+        thing = await db_session.get(Thing, thing.id, populate_existing=True)
         assert then_again <= thing.updated_at <= then_again_and_later
 
 
-class TestUuidMixin:
+class TestUuidAltKey:
     async def test_instance_attribute(self, db_session):
         async with db_session.begin():
             thing = Thing()
