@@ -6,8 +6,10 @@ from types import ModuleType
 from typing import Literal, assert_never, get_args
 from uuid import UUID
 
+from sqlalchemy import select
+
 from ...database import session_maker
-from ...database.model import ArtifactTask, ImportTask
+from ...database.model import Artifact, ArtifactTask, Import, ImportTask
 
 ScopeType = Literal["artifact", "import"]
 SCOPE_NAMES: tuple[ScopeType, ...] = get_args(ScopeType)
@@ -144,13 +146,18 @@ class TaskPluginManager:
                 )
                 plugins_raised_exception.add(plugin.name)
             else:
-                match scope:
-                    case "artifact":
-                        task = ArtifactTask(name=plugin.name, artifact_uuid=uuid)
-                    case "import":
-                        task = ImportTask(name=plugin.name, import_uuid=uuid)
-                    case _ as unreachable:
-                        assert_never(unreachable)
-
                 async with session_maker() as db_session:
+                    match scope:
+                        case "artifact":
+                            artifact = (
+                                await db_session.execute(select(Artifact).filter_by(uuid=uuid))
+                            ).one()
+                            task = ArtifactTask(name=plugin.name, artifact=artifact)
+                        case "import":
+                            import_ = (
+                                await db_session.execute(select(Import).filter_by(uuid=uuid))
+                            ).one()
+                            task = ImportTask(name=plugin.name, import_=import_)
+                        case _ as unreachable:
+                            assert_never(unreachable)
                     db_session.add(task)

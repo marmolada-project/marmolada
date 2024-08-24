@@ -4,7 +4,6 @@ import os
 import pathlib
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, ClassVar
-from uuid import UUID
 
 import magic
 from anyio import Path as AsyncPath
@@ -23,7 +22,7 @@ from sqlalchemy.sql import SQLColumnExpression
 
 from ...core.configuration import config
 from .. import Base
-from ..mixins import Creatable, Updatable, UuidPrimaryKey
+from ..mixins import BigIntPrimaryKey, Creatable, Updatable, UuidAltKey
 
 if TYPE_CHECKING:
     from .task import ArtifactTask, ImportTask
@@ -33,7 +32,7 @@ mime = magic.open(magic.MAGIC_MIME_TYPE)
 mime.load()
 
 
-class Import(Base, UuidPrimaryKey, Creatable, Updatable):
+class Import(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     __tablename__ = "imports"
 
     meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
@@ -59,12 +58,13 @@ class Import(Base, UuidPrimaryKey, Creatable, Updatable):
 
 def _artifact_path_default(context: DefaultExecutionContext) -> str:
     params = context.get_current_parameters()
-    import_uuid = params["import_uuid"]
+    uuid = params["uuid"]
+    import_id = params["import_id"]
     file_name = params["file_name"]
-    return f"incoming/{import_uuid}/{file_name}"
+    return f"incoming/import-{import_id}-artifact-{uuid}-{file_name}"
 
 
-class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
+class Artifact(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     __tablename__ = "artifacts"
 
     artifacts_root: ClassVar[pathlib.Path | None] = None
@@ -79,7 +79,7 @@ class Artifact(Base, UuidPrimaryKey, Creatable, Updatable):
         "path", unique=True, nullable=False, default=_artifact_path_default
     )
 
-    import_uuid: Mapped[UUID] = mapped_column(ForeignKey(Import.uuid))
+    import_id: Mapped[int] = mapped_column(ForeignKey(Import.id))
     import_: Mapped[Import] = relationship(back_populates="artifacts")
 
     source_uri: Mapped[str | None]

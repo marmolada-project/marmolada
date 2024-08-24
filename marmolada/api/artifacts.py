@@ -23,7 +23,7 @@ router = APIRouter(prefix="/artifacts")
 def _get_artifacts_query(import_uuid: UUID | None = None) -> Select:
     query = select(Artifact).order_by(Artifact.created_at).options(selectinload(Artifact.import_))
     if import_uuid:
-        query = query.filter_by(import_uuid=import_uuid)
+        query = query.join(Artifact.import_.and_(Import.uuid == import_uuid))
     return query
 
 

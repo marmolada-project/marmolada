@@ -56,7 +56,11 @@ class TestArtifact(ModelTestBase):
 
     async def test_path_getter(self, db_obj: Artifact):
         assert db_obj._path == str(db_obj.path)
-        assert db_obj._path == f"incoming/{db_obj.import_.uuid!s}/{self.attrs['file_name']}"
+        uuid = db_obj.uuid
+        import_id = db_obj.import_.id
+        assert db_obj._path == (
+            f"incoming/import-{import_id}-artifact-{uuid}-{self.attrs['file_name']}"
+        )
 
     @pytest.mark.parametrize("test_type", (str, Path))
     async def test_path_setter(self, test_type: type, db_obj: Artifact, db_session: AsyncSession):
