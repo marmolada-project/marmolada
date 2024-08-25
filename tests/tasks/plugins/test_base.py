@@ -26,7 +26,8 @@ TEST_PLUGIN_SPECS = [
     # unproblematic
     {"scope": "artifact", "name": "test1"},
     {"scope": "artifact", "name": "test2", "dependencies": ["test1", "test3"]},
-    {"scope": "artifact", "name": "test3", "dependencies": ["test1"], "process": "sync"},
+    {"scope": "artifact", "name": "test3", "dependencies": ["test1"]},
+    {"scope": "artifact", "name": "test4", "dependencies": ["test1"], "process": "sync"},
     {"scope": "import", "name": "test1"},
     {"scope": "import", "name": "test2", "dependencies": "test1"},
     # raising exception, depending in it
@@ -145,7 +146,7 @@ class TestTaskPluginManager:
             ".unset.missingscope: `scope` must be set",
             ".artifact.entrypointname: `name` must be set",
             ".artifact.missingprocess: `process` must be set",
-            ".import.illegalprocess: `process` must be a callable",
+            ".import.illegalprocess: `process` must be a coroutine function",
             ".5.illegalscopetype: `scope` must be of type str",
             ".illegal.illegalscope: unknown scope: illegal",
             ".import.test1: duplicate scope/name: import/test1",
@@ -185,7 +186,7 @@ class TestTaskPluginManager:
         if scope == "artifact":
             expected_output = [
                 f"Async artifact/test1.process({uuid})",
-                f"Sync artifact/test3.process({uuid})",
+                f"Async artifact/test3.process({uuid})",
                 f"Async artifact/test2.process({uuid})",
             ]
         elif scope == "import":

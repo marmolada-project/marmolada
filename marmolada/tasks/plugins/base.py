@@ -1,7 +1,8 @@
 import logging
 from collections import defaultdict
-from collections.abc import Awaitable, Callable, Sequence
+from collections.abc import Callable, Sequence
 from importlib.metadata import entry_points
+from inspect import iscoroutinefunction
 from types import ModuleType
 from typing import Literal, assert_never, get_args
 from uuid import UUID
@@ -54,7 +55,7 @@ class TaskPluginManager:
                     if not isinstance(item_value, item_types):
                         match item_name:
                             case "process":
-                                errors.append(f"`{item_name}` must be a callable")
+                                errors.append(f"`{item_name}` must be a coroutine function")
                             case "dependencies":
                                 errors.append(f"`{item_name}` must be string or sequence")
                             case _:
@@ -62,6 +63,9 @@ class TaskPluginManager:
                                 errors.append(f"`{item_name}` must be of type {item_types}")
                     else:
                         match item_name:
+                            case "process":
+                                if not iscoroutinefunction(item_value):
+                                    errors.append(f"`{item_name}` must be a coroutine function")
                             case "scope":
                                 if item_value not in SCOPE_NAMES:
                                     errors.append(f"unknown scope: {item_value}")
@@ -73,7 +77,7 @@ class TaskPluginManager:
                                     errors.append(
                                         f"duplicate scope/name: {module.scope}/{item_value}"
                                     )
-                            case "dependencies":
+                            case "dependencies":  # pragma: no branch
                                 if isinstance(item_value, Sequence) and any(
                                     not isinstance(x, str) for x in item_value
                                 ):
@@ -137,9 +141,7 @@ class TaskPluginManager:
                 continue
 
             try:
-                maybe_awaitable = plugin.process(uuid)
-                if isinstance(maybe_awaitable, Awaitable):
-                    await maybe_awaitable
+                await plugin.process(uuid)
             except Exception:
                 log.exception(
                     "Task plugin %s/%s[%s] raised exception", plugin.scope, plugin.name, uuid
