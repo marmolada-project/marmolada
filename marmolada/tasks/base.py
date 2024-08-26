@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 from .. import database
 from ..core.configuration import config
 from . import main
+from .plugins import TaskPluginManager
 from .typing import Context
 
 log = logging.getLogger(__name__)
@@ -34,6 +35,8 @@ async def startup_task_worker(ctx: Context) -> None:
     log.info("Task worker starting up…")
 
     database.init_model()
+    main.plugin_mgr = TaskPluginManager()
+    main.plugin_mgr.discover_plugins()
 
     log.info("Task worker started up.")
 
