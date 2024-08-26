@@ -13,22 +13,16 @@ from .util import utcnow
 __all__ = ("BigIntPrimaryKey", "Creatable", "Updatable", "UuidAltKey")
 
 
-class Creatable:
-    created_at: Mapped[dt.datetime] = mapped_column(TZDateTime, nullable=False, default=utcnow())
-
-
-class Updatable:
-    updated_at: Mapped[dt.datetime] = mapped_column(
-        TZDateTime, nullable=False, default=utcnow(), onupdate=utcnow()
+class BigIntPrimaryKey:
+    id: Mapped[BigInteger] = mapped_column(
+        "id", BigInteger, Identity(), primary_key=True, sort_order=-30
     )
 
 
-class BigIntPrimaryKey:
-    id: Mapped[BigInteger] = mapped_column("id", BigInteger, Identity(), primary_key=True)
-
-
 class UuidAltKey:
-    _uuid: Mapped[UUID] = mapped_column("uuid", Uuid, unique=True, default=uuid1, nullable=False)
+    _uuid: Mapped[UUID] = mapped_column(
+        "uuid", Uuid, unique=True, default=uuid1, nullable=False, sort_order=-20
+    )
 
     @hybrid_property
     def uuid(self) -> UUID:
@@ -49,3 +43,15 @@ class UuidAltKey:
 def uuid_primary_key_init(target: UuidAltKey, args: tuple[Any], kwargs: dict[str, Any]) -> None:
     # Ensure uuid is available early
     kwargs["uuid"] = kwargs.get("uuid") or uuid1()
+
+
+class Creatable:
+    created_at: Mapped[dt.datetime] = mapped_column(
+        TZDateTime, nullable=False, default=utcnow(), sort_order=-10
+    )
+
+
+class Updatable:
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        TZDateTime, nullable=False, default=utcnow(), onupdate=utcnow(), sort_order=-9
+    )
