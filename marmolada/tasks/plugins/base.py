@@ -163,12 +163,12 @@ class TaskPluginManager:
                         case "artifact":
                             artifact = (
                                 await db_session.execute(select(Artifact).filter_by(uuid=uuid))
-                            ).one()
+                            ).scalar_one()
                             task = ArtifactTask(name=plugin.name, artifact=artifact)
                         case "import":
                             import_ = (
                                 await db_session.execute(select(Import).filter_by(uuid=uuid))
-                            ).one()
+                            ).scalar_one()
                             task = ImportTask(name=plugin.name, import_=import_)
                         case _ as unreachable:
                             assert_never(unreachable)
