@@ -175,7 +175,7 @@ class TestTaskPluginManager:
             db_session = ctxmgr.__aenter__.return_value = mock.AsyncMock()
             db_session.add = mock.Mock()
             db_session.execute.return_value = query_result = mock.Mock()
-            query_result.one.return_value = scoped_obj
+            query_result.scalar_one.return_value = scoped_obj
 
             await mgr.process_scope(scope, uuid)
 
