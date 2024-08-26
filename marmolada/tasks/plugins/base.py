@@ -119,6 +119,16 @@ class TaskPluginManager:
                     for name in fulfilled_plugins:
                         del plugins[name]
 
+        if log.getEffectiveLevel() <= logging.INFO:
+            log.info(
+                "Discovered plugins: %s",
+                ", ".join(
+                    f"{scope}/{name}"
+                    for scope, plugins in ordered_scope_plugins.items()
+                    for name in plugins
+                ),
+            )
+
         self.scoped_plugins = ordered_scope_plugins
 
     async def process_scope(self, scope: ScopeType, uuid: UUID) -> None:
