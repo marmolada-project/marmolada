@@ -64,10 +64,10 @@ TEST_PLUGIN_SPECS = [
 def plugin_objs():
     objs = []
 
-    async def async_process_impl(scope, name, uuid):
+    async def async_process_impl(scope, name, uuid, *, db_session):
         print(f"Async {scope}/{name}.process({uuid})")
 
-    def sync_process_impl(scope, name, uuid):
+    def sync_process_impl(scope, name, uuid, *, db_session):
         print(f"Sync {scope}/{name}.process({uuid})")
 
     for spec in TEST_PLUGIN_SPECS:
@@ -171,7 +171,7 @@ class TestTaskPluginManager:
         caplog.clear()
 
         with mock.patch("marmolada.tasks.plugins.base.session_maker") as session_maker:
-            session_maker.return_value = ctxmgr = mock.MagicMock(AbstractAsyncContextManager)
+            session_maker.begin.return_value = ctxmgr = mock.MagicMock(AbstractAsyncContextManager)
             db_session = ctxmgr.__aenter__.return_value = mock.AsyncMock()
             db_session.add = mock.Mock()
             db_session.execute.return_value = query_result = mock.Mock()

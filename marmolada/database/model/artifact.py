@@ -5,7 +5,6 @@ import pathlib
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, ClassVar
 
-import magic
 from anyio import Path as AsyncPath
 from sqlalchemy import ForeignKey, event
 from sqlalchemy.engine.default import DefaultExecutionContext
@@ -28,8 +27,6 @@ if TYPE_CHECKING:
     from .task import ArtifactTask, ImportTask
 
 log = logging.getLogger(__name__)
-mime = magic.open(magic.MAGIC_MIME_TYPE)
-mime.load()
 
 
 class Import(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
@@ -135,7 +132,6 @@ class Artifact(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
 
         with os.fdopen(os.open(self.full_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY), "wb") as fp:
             fp.write(data)
-            self.content_type = mime.buffer(data)
 
         self._sessions_added_files[object_session(self)].add(self.full_path)
 

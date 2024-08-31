@@ -150,15 +150,15 @@ class TaskPluginManager:
                 )
                 continue
 
-            try:
-                await plugin.process(uuid)
-            except Exception:
-                log.exception(
-                    "Task plugin %s/%s[%s] raised exception", plugin.scope, plugin.name, uuid
-                )
-                plugins_raised_exception.add(plugin.name)
-            else:
-                async with session_maker() as db_session:
+            async with session_maker.begin() as db_session:
+                try:
+                    await plugin.process(db_session=db_session, uuid=uuid)
+                except Exception:
+                    log.exception(
+                        "Task plugin %s/%s[%s] raised exception", plugin.scope, plugin.name, uuid
+                    )
+                    plugins_raised_exception.add(plugin.name)
+                else:
                     match scope:
                         case "artifact":
                             artifact = (

@@ -44,7 +44,7 @@ class TestImport(ModelTestBase):
 @pytest.mark.marmolada_config({"artifacts": {"root": "doesn't matter"}})
 class TestArtifact(ModelTestBase):
     cls = Artifact
-    attrs = {"content_type": "image/jpeg", "file_name": "DSC01234.JPG"}
+    attrs = {"file_name": "DSC01234.JPG"}
 
     def _db_obj_get_dependencies(self):
         return {"import_": Import()}
@@ -134,7 +134,7 @@ class TestArtifact(ModelTestBase):
         else:  # testcase in ("normal", "dir-doesnt-exist", "delete", "rewrite-fails", "rollback")
             db_obj.data = b"Foo"
             assert db_obj.data == b"Foo"
-            assert db_obj.content_type == "text/plain"
+            assert db_obj.content_type is None
 
         if testcase == "delete":
             del db_obj.data
