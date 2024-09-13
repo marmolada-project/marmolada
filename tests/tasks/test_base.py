@@ -24,9 +24,11 @@ def test_get_redis_settings():
 
 
 async def test_get_taskpool():
-    with mock.patch.object(base, "task_pool"), mock.patch.object(
-        base, "create_pool"
-    ) as create_pool, mock.patch.object(base, "get_redis_settings") as get_redis_settings:
+    with (
+        mock.patch.object(base, "task_pool"),
+        mock.patch.object(base, "create_pool") as create_pool,
+        mock.patch.object(base, "get_redis_settings") as get_redis_settings,
+    ):
         base.task_pool = None
         get_redis_settings.return_value = redis_settings = object()
         create_pool.return_value = create_pool_retval = object()

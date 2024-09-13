@@ -29,7 +29,7 @@ def _get_artifacts_query(import_uuid: UUID | None = None) -> Select:
 
 @router.get("", response_model=CursorPage[schemas.ArtifactResult])
 async def get_artifacts(
-    db_session: Annotated[AsyncSession, Depends(req_db_session)]
+    db_session: Annotated[AsyncSession, Depends(req_db_session)],
 ) -> CursorPage[Artifact]:
     return await paginate(db_session, _get_artifacts_query())
 
@@ -128,9 +128,10 @@ async def post_artifact_for_import_from_local_file(
     try:
         await artifact.async_full_path.hardlink_to(local_path)
     except OSError:
-        async with await local_path.open("rb") as source, await artifact.async_full_path.open(
-            "wb"
-        ) as destination:
+        async with (
+            await local_path.open("rb") as source,
+            await artifact.async_full_path.open("wb") as destination,
+        ):
             await destination.write(await source.read())
 
     await db_session.commit()

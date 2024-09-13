@@ -101,7 +101,7 @@ def entry_points(plugin_objs):
     with mock.patch.object(base, "entry_points") as entry_points:
         mocked_entry_points = []
 
-        for spec, obj in zip(TEST_PLUGIN_SPECS, plugin_objs):
+        for spec, obj in zip(TEST_PLUGIN_SPECS, plugin_objs, strict=False):
             scope = spec.get("scope", "unset")
             ep = mock.Mock()
             ep.name = spec.get("name", "entrypointname")
