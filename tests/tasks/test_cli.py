@@ -7,9 +7,10 @@ from marmolada.tasks import cli
 
 @pytest.mark.parametrize("with_kbd_interrupt", (False, True), ids=("normal", "kbd-interrupt"))
 def test_serve(with_kbd_interrupt, cli_runner):
-    with mock.patch.object(cli, "run_worker") as run_worker, mock.patch.object(
-        cli, "get_worker_settings"
-    ) as get_worker_settings:
+    with (
+        mock.patch.object(cli, "run_worker") as run_worker,
+        mock.patch.object(cli, "get_worker_settings") as get_worker_settings,
+    ):
         get_worker_settings.return_value = sentinel = object()
         if with_kbd_interrupt:
             run_worker.side_effect = KeyboardInterrupt
