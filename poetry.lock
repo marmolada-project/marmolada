@@ -372,13 +372,13 @@ standard = ["email-validator (>=2.0.0)", "fastapi-cli[standard] (>=0.0.5)", "htt
 
 [[package]]
 name = "fastapi-pagination"
-version = "0.12.28"
+version = "0.12.29"
 description = "FastAPI pagination"
 optional = true
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "fastapi_pagination-0.12.28-py3-none-any.whl", hash = "sha256:289fde844cb3b4852fffc26192ff18ae3c8b89ce8e9f3323c510863b93296315"},
-    {file = "fastapi_pagination-0.12.28.tar.gz", hash = "sha256:caa5d8ee7dae786f1d5e23bd93e9892270201dfa7ebc493e6668634cd9e6445d"},
+    {file = "fastapi_pagination-0.12.29-py3-none-any.whl", hash = "sha256:c18e58c91cf7909490236ded4dae1326c68e286a0831de41ba1be170fb24f182"},
+    {file = "fastapi_pagination-0.12.29.tar.gz", hash = "sha256:bbfa8af44636f9cda3ec10f59fe370a89a8f10cfa4035a6dc4da86b9f8d06649"},
 ]
 
 [package.dependencies]
@@ -634,13 +634,13 @@ files = [
 
 [[package]]
 name = "httpcore"
-version = "1.0.5"
+version = "1.0.6"
 description = "A minimal low-level HTTP client."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "httpcore-1.0.5-py3-none-any.whl", hash = "sha256:421f18bac248b25d310f3cacd198d55b8e6125c107797b609ff9b7a6ba7991b5"},
-    {file = "httpcore-1.0.5.tar.gz", hash = "sha256:34a38e2f9291467ee3b44e89dd52615370e152954ba21721378a87b2960f7a61"},
+    {file = "httpcore-1.0.6-py3-none-any.whl", hash = "sha256:27b59625743b85577a8c0e10e55b50b5368a4f2cfe8cc7bcfa9cf00829c2682f"},
+    {file = "httpcore-1.0.6.tar.gz", hash = "sha256:73f6dbd6eb8c21bbf7ef8efad555481853f5f6acdeaff1edb0694289269ee17f"},
 ]
 
 [package.dependencies]
@@ -651,7 +651,7 @@ h11 = ">=0.13,<0.15"
 asyncio = ["anyio (>=4.0,<5.0)"]
 http2 = ["h2 (>=3,<5)"]
 socks = ["socksio (==1.*)"]
-trio = ["trio (>=0.22.0,<0.26.0)"]
+trio = ["trio (>=0.22.0,<1.0)"]
 
 [[package]]
 name = "httpx"
