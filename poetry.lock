@@ -1322,13 +1322,13 @@ cli = ["click (>=5.0)"]
 
 [[package]]
 name = "python-multipart"
-version = "0.0.16"
+version = "0.0.17"
 description = "A streaming multipart parser for Python"
 optional = true
 python-versions = ">=3.8"
 files = [
-    {file = "python_multipart-0.0.16-py3-none-any.whl", hash = "sha256:c2759b7b976ef3937214dfb592446b59dfaa5f04682a076f78b117c94776d87a"},
-    {file = "python_multipart-0.0.16.tar.gz", hash = "sha256:8dee37b88dab9b59922ca173c35acb627cc12ec74019f5cd4578369c6df36554"},
+    {file = "python_multipart-0.0.17-py3-none-any.whl", hash = "sha256:15dc4f487e0a9476cc1201261188ee0940165cffc94429b6fc565c4d3045cb5d"},
+    {file = "python_multipart-0.0.17.tar.gz", hash = "sha256:41330d831cae6e2f22902704ead2826ea038d0419530eadff3ea80175aec5538"},
 ]
 
 [[package]]
@@ -1721,4 +1721,4 @@ tasks = ["SQLAlchemy", "arq", "asyncpg", "psycopg2", "pyxdg"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "aec099a9bae9ecca120158f301bb9097202b3e86dbcad4adbca62b3c60fb22d3"
+content-hash = "334f42577969c366b6e6f5dccaf612d03d62644ecfe38e27e4869b08039f400d"
