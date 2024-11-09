@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from marmolada.core.configuration import config, read_configuration
 from marmolada.database.main import Base, _async_from_sync_url, init_model, session_maker
-from marmolada.database.model import Artifact, Import
+from marmolada.database.model import Artifact, Import, Tag, TagLabel
 
 HERE = Path(__file__).parent
 EXAMPLE_CONFIG = HERE.parent / "etc" / "marmolada" / "config-example.yaml"
@@ -239,8 +239,13 @@ async def db_obj(request, db_session: AsyncSession):
 async def db_test_data_objs() -> dict[str, list[Base]]:
     import_ = Import(complete=True)
     artifact = Artifact(import_=import_, file_name="foo.jpg")
+    tags = [
+        Tag(label_objs={TagLabel(label="tag0")}),
+        Tag(label_objs={TagLabel(label="tag1")}),
+        Tag(label_objs={TagLabel(label="tag2")}),
+    ]
 
-    return {"imports": [import_], "artifacts": [artifact]}
+    return {"imports": [import_], "artifacts": [artifact], "tags": tags}
 
 
 @pytest.fixture
