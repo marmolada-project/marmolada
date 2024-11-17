@@ -371,13 +371,13 @@ standard = ["email-validator (>=2.0.0)", "fastapi-cli[standard] (>=0.0.5)", "htt
 
 [[package]]
 name = "fastapi-pagination"
-version = "0.12.31"
+version = "0.12.32"
 description = "FastAPI pagination"
 optional = true
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "fastapi_pagination-0.12.31-py3-none-any.whl", hash = "sha256:a985d1f1baca1c42e7bfa51e9c7d6433e30bdca2ae236c3f3fc01bd9e62dbda6"},
-    {file = "fastapi_pagination-0.12.31.tar.gz", hash = "sha256:224d6dc2671f95f1d5e467e42898809438570cd662e1008c7b6b91889211d780"},
+    {file = "fastapi_pagination-0.12.32-py3-none-any.whl", hash = "sha256:38e7e72abf252cbebbc1beff9081e4929762756c04959c471b2a5866bb7f0aaf"},
+    {file = "fastapi_pagination-0.12.32.tar.gz", hash = "sha256:b808b5b8af493c51d96ae0091b60532b25688cbca1350f39cb72f10d4d69a6ab"},
 ]
 
 [package.dependencies]
