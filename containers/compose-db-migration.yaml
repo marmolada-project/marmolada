@@ -1,0 +1,29 @@
+name: marmolada
+
+volumes:
+  pgsql-data:
+
+services:
+  db:
+    image: quay.io/fedora/postgresql-16
+    environment:
+      - POSTGRESQL_USER=marmolada
+      - POSTGRESQL_PASSWORD=marmolada
+      - POSTGRESQL_DATABASE=marmolada
+    volumes:
+      - pgsql-data:/var/lib/pgsql/data
+
+  db-migration:
+    image: localhost/marmolada_db-chores
+    command:
+      # depends -> ... -> condition: service_healthy doesn’t work properly, just wait a little
+      - sh
+      - -c
+      - sleep 1; exec poetry run marmolada database migration upgrade
+    environment:
+      marmolada_database__sqlalchemy__url: postgresql://marmolada:marmolada@db/marmolada # notsecret
+    depends:
+      db:
+        condition: service_healthy
+    healthcheck:
+      disabled: true
