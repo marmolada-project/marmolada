@@ -64,7 +64,7 @@ class TestImports:
         success = "success" in testcase
         noop = "noop" in testcase
         cant_uncomplete = "cant-uncomplete" in testcase
-        expected_import_complete = success and not noop or cant_uncomplete
+        expected_import_complete = (success and not noop) or cant_uncomplete
 
         desired_complete = False
         if success:
