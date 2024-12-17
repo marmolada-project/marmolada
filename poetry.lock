@@ -1736,11 +1736,11 @@ docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.2,!=7.3)", "s
 test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=23.1)", "pytest (>=7.4)", "pytest-env (>=0.8.2)", "pytest-freezer (>=0.4.8)", "pytest-mock (>=3.11.1)", "pytest-randomly (>=3.12)", "pytest-timeout (>=2.1)", "setuptools (>=68)", "time-machine (>=2.10)"]
 
 [extras]
-api = ["SQLAlchemy", "arq", "asyncpg", "fastapi", "fastapi-pagination", "greenlet", "python-multipart", "uvicorn"]
+api = ["SQLAlchemy", "arq", "asyncpg", "fastapi", "fastapi-pagination", "greenlet", "psycopg2", "python-multipart", "uvicorn"]
 database = ["SQLAlchemy", "alembic", "asyncpg", "greenlet", "psycopg2"]
 tasks = ["SQLAlchemy", "arq", "asyncpg", "psycopg2", "pyxdg"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "236f08e346e2f6547b7f1dd90e17c1ef016ffc78f54a4bad5496b1ec9e374043"
+content-hash = "a8ac2d7ef2c559e91623721f9d3c5972b50d4e0b270c48e21b2b49acae85a9a6"

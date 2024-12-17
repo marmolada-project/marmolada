@@ -48,7 +48,7 @@ pytest-xdist = "^3.5.0"
 pillow = "^10.4.0 || ^11.0.0"
 
 [tool.poetry.extras]
-api = ["fastapi", "uvicorn", "python-multipart", "SQLAlchemy", "greenlet", "psycopg3", "asyncpg", "fastapi-pagination", "arq"]
+api = ["fastapi", "uvicorn", "python-multipart", "SQLAlchemy", "greenlet", "psycopg2", "asyncpg", "fastapi-pagination", "arq"]
 database = ["alembic", "SQLAlchemy", "greenlet", "psycopg2", "asyncpg"]
 tasks = ["arq", "SQLAlchemy", "psycopg2", "asyncpg", "pyxdg"]
 
