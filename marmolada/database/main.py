@@ -6,7 +6,7 @@ from sqlalchemy import MetaData
 from sqlalchemy import types as sqla_types
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.engine import URL, make_url
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from ..core.configuration import config
@@ -29,7 +29,7 @@ type_annotation_map = {
 }
 
 
-class Base(DeclarativeBase):
+class Base(DeclarativeBase, AsyncAttrs):
     metadata = metadata
     type_annotation_map = type_annotation_map
 

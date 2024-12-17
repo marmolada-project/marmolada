@@ -1743,4 +1743,4 @@ tasks = ["SQLAlchemy", "arq", "asyncpg", "psycopg2", "pyxdg"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "a8ac2d7ef2c559e91623721f9d3c5972b50d4e0b270c48e21b2b49acae85a9a6"
+content-hash = "f44263b166d1f54219bde1d3d41a873ca4d8177f540e77da856c83687eccd3d1"
