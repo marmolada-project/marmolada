@@ -12,4 +12,4 @@ class TestVersion:
     def test___version__(self):
         pyproject = toml.load(PYPROJECT_TOML_PATH)
 
-        assert version.__version__ == pyproject["tool"]["poetry"]["version"]
+        assert version.__version__ == pyproject["project"]["version"]

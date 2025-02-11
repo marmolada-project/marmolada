@@ -1,67 +1,69 @@
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "marmolada"
-requires-python = ">= 3.12"
-
-[tool.poetry]
-name = "marmolada"
 version = "0.1.0"
 description = ""
-authors = ["Nils Philippsen <nils@tiptoe.de>"]
+authors = [
+    {name = "Nils Philippsen", email = "nils@tiptoe.de"},
+]
+requires-python = "<4.0,>=3.12"
+dependencies = [
+    "PyYAML<7.0,>=6.0",
+    "click<9.0.0,>=8.0.3",
+    "click-plugins<2.0.0,>=1.1.1",
+    "pydantic<3.0.0,>=2.5.3",
+    "anyio<5.0.0,>=4.3.0",
+    "pydantic-settings<3.0.0,>=2.3.4",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-PyYAML = "^6.0"
-click = "^8.0.3"
-click-plugins = "^1.1.1"
-fastapi = {version = "^0.95 || ^0.96 || ^0.97 || ^0.98 || ^0.99 || ^0.100 || ^0.101 || ^0.102 || ^0.103 || ^0.104 || ^0.105 || ^0.106 || ^0.107 || ^0.108 || ^0.109 || ^0.110.0 || ^0.111.0 || ^0.112.0 || ^0.113.0 || ^0.114.0 || ^0.115.0", optional = true}
-uvicorn = {version = "^0.16 || ^0.17 || ^0.18 || ^0.19 || ^0.20 || ^0.21 || ^0.22 || ^0.23 || ^0.24 || ^0.25 || ^0.26 || ^0.27.0 || ^0.28.0 || ^0.29.0 || ^0.30.0 || ^0.31.0 || ^0.32.0 || ^0.33.0 || ^0.34.0", optional = true}
-python-multipart = {version = "^0.0.6 || ^0.0.7 || ^0.0.8 || ^0.0.9 || ^0.0.10 || ^0.0.11 || ^0.0.12 || ^0.0.16 || ^0.0.17 || ^0.0.19 || ^0.0.20", optional = true}
-alembic = {version = "^1.7.5", optional = true}
-SQLAlchemy = {version = "^2.0.13", optional = true}
-greenlet = {version = "^3.0.0rc", optional = true}
-psycopg2 = {version = "^2.9.6", optional = true}
-asyncpg = {version = "^0.27.0 || ^0.28.0 || ^0.29.0 || ^0.30.0", optional = true}
-pydantic = "^2.5.3"
-fastapi-pagination = {version = "^0.12.17", optional = true, extras = ["asyncpg", "sqlalchemy"]}
-anyio = "^4.3.0"
-arq = {version = "^0.25.0 || ^0.26.0", optional = true}
-pydantic-settings = "^2.3.4"
-pyxdg = {version = "^0.28", optional = true}
+[dependency-groups]
+dev = [
+    "black<25.0.0,>=22.0.0",
+    "pytest<9.0.0,>=5.2.0",
+    "pytest-cov<7.0.0,>=3.0.0",
+    "tox<5.0.0,>=3.24.4",
+    "httpx<0.29.0,>=0.21.0",
+    "pytest-asyncio<0.26.0,>=0.16.0",
+    "ruff<0.9.0,>=0.2.0",
+    "toml<0.11.0,>=0.10.2",
+    "psycopg<4.0.0,>=3.1.9",
+    "pytest-postgresql<7.0.0,>=5.0.0",
+    "coverage<8.0.0,>=7.4.1",
+    "pytest-xdist<4.0.0,>=3.5.0",
+    "pillow<12.0.0,>=10.4.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-black = "^22 || ^23 || ^24.0.0"
-pytest = "^5.2 || ^6 || ^7 || ^8.0.0"
-pytest-cov = "^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0"
-tox = "^3.24.4 || ^4"
-httpx = "^0.21 || ^0.22 || ^0.23 || ^0.24 || ^0.25 || ^0.26 || ^0.27.0 || ^0.28.0"
-pytest-asyncio = "^0.16.0 || ^0.17.0 || ^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0 || ^0.25.0"
-ruff = "^0.2.0 || ^0.3.0 || ^0.4.0 || ^0.5.0 || ^0.6.0 || ^0.7.0 || ^0.8.0"
-toml = "^0.10.2"
-psycopg = "^3.1.9"
-pytest-postgresql = "^5.0.0 || ^6.0.0"
-coverage = "^7.4.1"
-pytest-xdist = "^3.5.0"
-pillow = "^10.4.0 || ^11.0.0"
+[project.optional-dependencies]
+api = [
+    "fastapi<0.116.0,>=0.95",
+	"uvicorn<0.35.0,>=0.16",
+	"python-multipart<0.0.21,>=0.0.6",
+	"SQLAlchemy<3.0.0,>=2.0.13",
+	"greenlet<4.0.0,>=3.0.0rc",
+	"psycopg2<3.0.0,>=2.9.6",
+	"asyncpg<0.31.0,>=0.27.0",
+	"fastapi-pagination[asyncpg,sqlalchemy]<0.13.0,>=0.12.17",
+	"arq<0.27.0,>=0.25.0",
+]
+database = ["alembic<2.0.0,>=1.7.5"]
+tasks = ["pyxdg<0.29.0,>=0.28.0"]
 
-[tool.poetry.extras]
-api = ["fastapi", "uvicorn", "python-multipart", "SQLAlchemy", "greenlet", "psycopg2", "asyncpg", "fastapi-pagination", "arq"]
-database = ["alembic", "SQLAlchemy", "greenlet", "psycopg2", "asyncpg"]
-tasks = ["arq", "SQLAlchemy", "psycopg2", "asyncpg", "pyxdg"]
-
-[tool.poetry.scripts]
+[project.scripts]
 marmolada = "marmolada.core.cli:cli"
 
-[tool.poetry.plugins."marmolada.cli"]
-"api" = "marmolada.api.cli:api"
-"database" = "marmolada.database.cli:database"
-"tasks" = "marmolada.tasks.cli:tasks"
+[project.entry-points."marmolada.cli"]
+api = "marmolada.api.cli:api"
+database = "marmolada.database.cli:database"
+tasks = "marmolada.tasks.cli:tasks"
 
-[tool.poetry.plugins."marmolada.tasks"]
+[project.entry-points."marmolada.tasks"]
 "artifacts/file-type" = "marmolada.tasks.plugins.artifacts.file_type"
+
+[tool.uv]
+default-groups = []
 
 [tool.pytest.ini_options]
 addopts = "--cov --cov-config .coveragerc --cov-report term --cov-report xml --cov-report html"
