@@ -21,7 +21,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "black<25.1.1,>=22.0.0",
     "pytest<9.0.0,>=5.2.0",
     "pytest-cov<7.0.0,>=3.0.0",
     "tox<5.0.0,>=3.24.4",
@@ -70,9 +69,6 @@ addopts = "--cov --cov-config .coveragerc --cov-report term --cov-report xml --c
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 
-[tool.black]
-line-length = 100
-
 [tool.ruff]
 line-length = 100
 
@@ -84,8 +80,3 @@ allowed-confusables = ["’"]
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101", "RUF012"]
 "**/__init__.py" = ["F401"]
-
-# Kept around, keep in sync with ruff
-[tool.isort]
-line_length = 100
-profile = "black"
