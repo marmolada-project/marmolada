@@ -56,7 +56,7 @@ async def post_import(
 @router.put("/{uuid}", response_model=schemas.ImportResult)
 async def put_import(
     uuid: UUID,
-    data: schemas.ImportPatch,
+    data: schemas.ImportPut,
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
     task_pool: Annotated[ArqRedis, Depends(get_task_pool)],
 ) -> Import:
