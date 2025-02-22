@@ -73,6 +73,10 @@ class ImportReference(ResourceReference):
     endpoint = "imports"
 
 
+class TagReference(ResourceReference):
+    endpoint = "tags"
+
+
 # Imports
 
 
@@ -107,3 +111,38 @@ class ArtifactResult(ArtifactPost, UUIDBaseModel):
     endpoint = "artifacts"
     import_: ImportReference = Field(alias="import")
     file_name: str
+
+
+# Tags
+
+
+class QualifiedTagLabel(BaseModel):
+    label: Annotated[str, Field(pattern=r"^\S+(?:\s\S+)*$", examples=["Cab", "Taxi"])]
+    languages: list[
+        Annotated[
+            str,
+            Field(
+                validation_alias="languages_by_iso_code",
+                pattern=r"^\S\S(?:_\S\S)?$",
+                examples=["en_US", "en_GB"],
+            ),
+        ]
+    ]
+
+
+class TagPost(BaseModel):
+    labels: list[str | QualifiedTagLabel]
+    parents: list[UUID] | None = None
+
+
+class TagPut(BaseModel):
+    labels: list[Annotated[str, Field(examples=["Dog", "Cat"])] | QualifiedTagLabel] | None = None
+    parents: list[UUID] | None = None
+    children: list[UUID] | None = None
+
+
+class TagResult(UUIDBaseModel):
+    endpoint = "tags"
+    label_objs: Annotated[list[QualifiedTagLabel], Field(serialization_alias="labels")]
+    parents: list[TagReference]
+    children: list[TagReference]
