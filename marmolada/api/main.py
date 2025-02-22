@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi_pagination import add_pagination
 
 from ..database import init_model
-from . import artifacts, imports
+from . import artifacts, imports, tags
 from .base import API_PREFIX
 
 
@@ -21,5 +21,6 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(artifacts.router, prefix=API_PREFIX)
 app.include_router(imports.router, prefix=API_PREFIX)
+app.include_router(tags.router, prefix=API_PREFIX)
 
 add_pagination(app)
