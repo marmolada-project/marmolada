@@ -2,7 +2,7 @@ import datetime as dt
 from typing import Any
 from uuid import UUID, uuid1
 
-from sqlalchemy import BigInteger, Identity, Uuid
+from sqlalchemy import BigInteger, Identity, Uuid, text
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, QueryableAttribute, mapped_column
@@ -21,7 +21,13 @@ class BigIntPrimaryKey:
 
 class UuidAltKey:
     _uuid: Mapped[UUID] = mapped_column(
-        "uuid", Uuid, unique=True, default=uuid1, nullable=False, sort_order=-20
+        "uuid",
+        Uuid,
+        unique=True,
+        default=uuid1,
+        server_default=text("gen_random_uuid()"),
+        nullable=False,
+        sort_order=-20,
     )
 
     @hybrid_property
