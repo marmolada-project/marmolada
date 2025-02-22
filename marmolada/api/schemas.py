@@ -80,7 +80,7 @@ class ImportPost(BaseModel):
     meta: dict[str, Any] | None = None
 
 
-class ImportPatch(BaseModel):
+class ImportPut(BaseModel):
     complete: bool
 
 
