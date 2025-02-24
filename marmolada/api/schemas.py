@@ -1,8 +1,17 @@
 from typing import TYPE_CHECKING, Annotated, Any, ClassVar, Literal
 from uuid import UUID
 
-from pydantic import AnyUrl, ConfigDict, Field, field_serializer, model_serializer
+from pydantic import (
+    AnyUrl,
+    ConfigDict,
+    Field,
+    ValidationError,
+    WrapValidator,
+    field_serializer,
+    model_serializer,
+)
 from pydantic import BaseModel as PydanticBaseModel
+from pydantic_core.core_schema import NoInfoWrapValidatorFunction, ValidatorFunctionWrapHandler
 
 from .base import API_PREFIX
 
@@ -77,6 +86,28 @@ class TagReference(ResourceReference):
     endpoint = "tags"
 
 
+# UUID fields coping with endpoint paths
+
+
+def strip_endpoint(endpoint: str) -> NoInfoWrapValidatorFunction:
+    endpoint_str = f"{API_PREFIX}/{endpoint}/"
+
+    def validate_without_endpoint(v: Any, handler: ValidatorFunctionWrapHandler) -> Any:
+        try:
+            if isinstance(v, str) and v.startswith(endpoint_str):
+                return handler(v[len(endpoint_str) :])
+            return handler(v)
+        except ValidationError as exc:
+            raise ValueError(f"Needs to be valid {endpoint} endpoint or UUID") from exc
+
+    return validate_without_endpoint
+
+
+ArtifactUUID = Annotated[UUID, WrapValidator(strip_endpoint("artifacts"))]
+ImportUUID = Annotated[UUID, WrapValidator(strip_endpoint("imports"))]
+TagUUID = Annotated[UUID, WrapValidator(strip_endpoint("tags"))]
+
+
 # Imports
 
 
@@ -132,13 +163,13 @@ class QualifiedTagLabel(BaseModel):
 
 class TagPost(BaseModel):
     labels: list[str | QualifiedTagLabel]
-    parents: list[UUID] | None = None
+    parents: list[TagUUID] | None = None
 
 
 class TagPut(BaseModel):
     labels: list[Annotated[str, Field(examples=["Dog", "Cat"])] | QualifiedTagLabel] | None = None
-    parents: list[UUID] | None = None
-    children: list[UUID] | None = None
+    parents: list[TagUUID] | None = None
+    children: list[TagUUID] | None = None
 
 
 class TagResult(UUIDBaseModel):
