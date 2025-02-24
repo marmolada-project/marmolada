@@ -1,4 +1,8 @@
 import uuid
+from typing import Annotated
+
+import pytest
+from pydantic import TypeAdapter, ValidationError, WrapValidator
 
 from marmolada.api import base, schemas
 
@@ -56,3 +60,19 @@ class TestResourceReference:
         x = Thing(a_thing=15)
         o = Reference.model_validate(x)
         assert o.model_dump() == f"{base.API_PREFIX}/{o.endpoint}/{o.uuid}"
+
+
+def test_strip_endpoint():
+    TestUUID = Annotated[uuid.UUID, WrapValidator(schemas.strip_endpoint("test"))]
+
+    ta = TypeAdapter(TestUUID)
+
+    test_uuid = uuid.uuid4()
+
+    assert ta.validate_python(str(test_uuid)) == test_uuid
+    assert ta.validate_python(f"{base.API_PREFIX}/test/{test_uuid}") == test_uuid
+
+    with pytest.raises(ValidationError, match="Needs to be valid test endpoint or UUID"):
+        ta.validate_python("5")
+    with pytest.raises(ValidationError, match="Needs to be valid test endpoint or UUID"):
+        ta.validate_python(f"{base.API_PREFIX}/test/5")
