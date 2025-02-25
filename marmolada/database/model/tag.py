@@ -1,5 +1,5 @@
 import re
-from collections.abc import Sequence
+from collections.abc import Collection, Sequence
 
 from sqlalchemy import (
     BigInteger,
@@ -27,6 +27,40 @@ from .language import Language
 
 class TagCyclicGraphError(Exception):
     """Operation would cause a cyclic reference between Tags."""
+
+    def __init__(
+        self,
+        *args,
+        target_obj: "Tag",
+        new_parents_failing: Collection["Tag"] = (),
+        new_children_failing: Collection["Tag"] = (),
+        **kwargs,
+    ) -> None:
+        self.target_obj = target_obj
+        self.new_parents_failing = new_parents_failing
+        self.new_children_failing = new_children_failing
+
+        if not args:
+            errors = []
+
+            if target_obj in new_parents_failing:
+                errors.append(f"{target_obj.uuid} can’t be made parent of itself.")
+            new_parents_uuid_str = ", ".join(
+                str(p.uuid) for p in new_parents_failing if p is not target_obj
+            )
+            if new_parents_uuid_str:
+                errors.append(f"{target_obj.uuid} is an ancestor of {new_parents_uuid_str}.")
+
+            if target_obj in new_children_failing:
+                errors.append(f"{target_obj.uuid} can’t be made child of itself.")
+            new_children_uuid_str = ", ".join(
+                str(c.uuid) for c in new_children_failing if c is not target_obj
+            )
+            if new_children_uuid_str:
+                errors.append(f"{target_obj.uuid} is a descendant of {new_children_uuid_str}.")
+            args = (" ".join(errors),)
+
+        super().__init__(*args, **kwargs)
 
 
 tags_relations = Table(
@@ -198,9 +232,7 @@ class Tag(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
                 cyclic_candidates.append(candidate)
 
         if cyclic_candidates:
-            raise TagCyclicGraphError(
-                f"{self} is an ancestor of {', '.join(str(c) for c in cyclic_candidates)}"
-            )
+            raise TagCyclicGraphError(target_obj=self, new_parents_failing=cyclic_candidates)
 
         (await self.awaitable_attrs.parents).update(new_parents)
         for new_parent in new_parents:
@@ -224,9 +256,7 @@ class Tag(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
                 cyclic_candidates.append(candidate)
 
         if cyclic_candidates:
-            raise TagCyclicGraphError(
-                f"{self} is a descendant of {', '.join(str(c) for c in cyclic_candidates)}"
-            )
+            raise TagCyclicGraphError(target_obj=self, new_children_failing=cyclic_candidates)
 
         (await self.awaitable_attrs.children).update(new_children)
         for new_child in new_children:

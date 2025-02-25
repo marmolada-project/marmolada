@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 from sqlalchemy import delete, select
 from sqlalchemy.exc import DBAPIError
@@ -6,6 +8,37 @@ from sqlalchemy.orm.exc import NoResultFound
 from marmolada.database.model import Tag, TagCyclicGraphError, TagLabel
 
 from .common import ModelTestBase
+
+
+class TestTagCyclicGraphError:
+    def test___init__(self) -> None:
+        target_obj = mock.Mock(uuid="target_obj")
+
+        parent_candidates = [mock.Mock(uuid="parent_obj")]
+        child_candidates = [mock.Mock(uuid="child_obj")]
+
+        exc = TagCyclicGraphError("Foo.", target_obj=target_obj)
+        assert str(exc) == "Foo."
+
+        exc = TagCyclicGraphError(target_obj=target_obj, new_parents_failing=parent_candidates)
+        assert str(exc) == "target_obj is an ancestor of parent_obj."
+
+        exc = TagCyclicGraphError(
+            target_obj=target_obj, new_parents_failing=[*parent_candidates, target_obj]
+        )
+        assert str(exc) == (
+            "target_obj can’t be made parent of itself. target_obj is an ancestor of parent_obj."
+        )
+
+        exc = TagCyclicGraphError(target_obj=target_obj, new_children_failing=child_candidates)
+        assert str(exc) == "target_obj is a descendant of child_obj."
+
+        exc = TagCyclicGraphError(
+            target_obj=target_obj, new_children_failing=[*child_candidates, target_obj]
+        )
+        assert str(exc) == (
+            "target_obj can’t be made child of itself. target_obj is a descendant of child_obj."
+        )
 
 
 class TestTag(ModelTestBase):

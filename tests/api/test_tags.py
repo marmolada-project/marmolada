@@ -79,14 +79,19 @@ class TestTags:
                 assert parents == set()
 
     @pytest.mark.parametrize(
-        "with_parents, with_children, other_tags_missing, tag_missing, with_labels",
         (
-            pytest.param(True, False, False, False, True, id="with-parents"),
-            pytest.param(True, False, True, False, True, id="with-parents-missing"),
-            pytest.param(False, True, False, False, True, id="with-children"),
-            pytest.param(False, True, True, False, True, id="with-children-missing"),
-            pytest.param(False, False, False, True, True, id="with-tag-not-found"),
-            pytest.param(False, False, False, False, False, id="without-labels"),
+            "with_parents, with_children, other_tags_missing, tag_missing, with_labels,"
+            + " with_cyclic_error"
+        ),
+        (
+            pytest.param(True, False, False, False, True, False, id="with-parents"),
+            pytest.param(True, False, False, False, True, True, id="with-parents-cyclic-error"),
+            pytest.param(True, False, True, False, True, False, id="with-parents-missing"),
+            pytest.param(False, True, False, False, True, False, id="with-children"),
+            pytest.param(False, True, False, False, True, True, id="with-children-cyclic-error"),
+            pytest.param(False, True, True, False, True, False, id="with-children-missing"),
+            pytest.param(False, False, False, True, True, False, id="with-tag-not-found"),
+            pytest.param(False, False, False, False, False, False, id="without-labels"),
         ),
     )
     async def test_put(
@@ -96,6 +101,7 @@ class TestTags:
         other_tags_missing: bool,
         tag_missing: bool,
         with_labels: bool,
+        with_cyclic_error: bool,
         client: AsyncClient,
         db_test_data_objs: dict[str, list[Base]],
         db_session: AsyncSession,
@@ -106,8 +112,12 @@ class TestTags:
         body = {}
         if with_parents:
             body["parents"] = [str(parent_tag.uuid)]
+            if with_cyclic_error:
+                body["parents"].append(str(tag.uuid))
         if with_children:
             body["children"] = [str(child_tag.uuid)]
+            if with_cyclic_error:
+                body["children"].append(str(tag.uuid))
         if with_labels:
             body["labels"] = [
                 "simple-label",
@@ -129,16 +139,27 @@ class TestTags:
                 db_session.add(tag_label)
 
         resp = await client.put(f"{base.API_PREFIX}/tags/{tag.uuid}", json=body)
+        result = resp.json()
+
         if tag_missing:
             assert resp.status_code == status.HTTP_404_NOT_FOUND
             return
 
-        if (with_parents or with_children) and other_tags_missing:
+        if (with_parents or with_children) and (other_tags_missing or with_cyclic_error):
             assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            if other_tags_missing:
+                if with_parents:
+                    assert f"Failure looking up parents: {parent_tag.uuid}" in result["detail"]
+                if with_children:
+                    assert f"Failure looking up children: {child_tag.uuid}" in result["detail"]
+            if with_cyclic_error:
+                if with_parents:
+                    assert f"{tag.uuid} can’t be made parent of itself." in result["detail"]
+                if with_children:
+                    assert f"{tag.uuid} can’t be made child of itself." in result["detail"]
             return
 
         assert resp.status_code == status.HTTP_200_OK
-        result = resp.json()
 
         async with db_session.begin():
             tag = (

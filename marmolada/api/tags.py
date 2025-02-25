@@ -10,7 +10,7 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ..database.model import Language, Tag, TagLabel
+from ..database.model import Language, Tag, TagCyclicGraphError, TagLabel
 from . import schemas
 from .database import req_db_session
 
@@ -137,7 +137,10 @@ async def put_tag(
         parents = await tag.awaitable_attrs.parents
         add_parents = new_parents - parents
         parents.intersection_update(new_parents)
-        await tag.add_parents(db_session, *add_parents)
+        try:
+            await tag.add_parents(db_session, *add_parents)
+        except TagCyclicGraphError as exc:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.args[0]) from exc
 
     if data.children is not None:
         new_children = set(
@@ -159,7 +162,10 @@ async def put_tag(
         children = await tag.awaitable_attrs.children
         add_children = new_children - children
         children.intersection_update(new_children)
-        await tag.add_children(db_session, *add_children)
+        try:
+            await tag.add_children(db_session, *add_children)
+        except TagCyclicGraphError as exc:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.args[0]) from exc
 
     if data.labels is not None:
         qualified_labels_after = [
