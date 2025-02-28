@@ -494,7 +494,7 @@ dev = [
     { name = "pytest", specifier = ">=5.2.0,<9.0.0" },
     { name = "pytest-asyncio", specifier = ">=0.16.0,<0.26.0" },
     { name = "pytest-cov", specifier = ">=3.0.0,<7.0.0" },
-    { name = "pytest-postgresql", specifier = ">=5.0.0,<7.0.0" },
+    { name = "pytest-postgresql", specifier = ">=5.0.0,<7.0.1" },
     { name = "pytest-xdist", specifier = ">=3.5.0,<4.0.0" },
     { name = "ruff", specifier = ">=0.2.0,<0.9.8" },
     { name = "toml", specifier = ">=0.10.2,<0.11.0" },
@@ -746,18 +746,18 @@ wheels = [
 
 [[package]]
 name = "pytest-postgresql"
-version = "6.1.1"
+version = "7.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "mirakuru" },
+    { name = "packaging" },
     { name = "port-for" },
     { name = "psycopg" },
     { name = "pytest" },
-    { name = "setuptools" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/88/51/d56a56fd852f0e3da5d001cb90815c793f904e387495e63e22ea90d2de1d/pytest_postgresql-6.1.1.tar.gz", hash = "sha256:f996637367e6aecebba1349da52eea95340bdb434c90e4b79739e62c656056e2", size = 47500 }
+sdist = { url = "https://files.pythonhosted.org/packages/cf/87/aa071042c17b4d81def7ec2f90a929f881f2aa82ae0987f21a589aa20f84/pytest_postgresql-7.0.0.tar.gz", hash = "sha256:cf0016cee5d9ac06f50cfc61bb0597d1fa90780d77c4453bc18e4930cae04aaa", size = 49877 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/db/c8/ca523b7dac9253cbfd60466aa0993b4fe5c558844585e7a0c0ad21d00bec/pytest_postgresql-6.1.1-py3-none-any.whl", hash = "sha256:bd4c0970d25685ac3d34d42263fcbfbf134bf02d22519fce7e1ccf4122d8b99a", size = 40529 },
+    { url = "https://files.pythonhosted.org/packages/10/c3/e5099d7049e49a6beeaf6cac511ecd50013284200644285d761eae71d2ea/pytest_postgresql-7.0.0-py3-none-any.whl", hash = "sha256:aaebadbf060b85cca7755fdf5ed7aa2929edd0f842c9b7f56ffe1e58e0d3b749", size = 41266 },
 ]
 
 [[package]]
@@ -875,15 +875,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/49/79/acbc1edd03ac0e2a04ae2593555dbc9990b34090a9729a0c4c0cf20fb595/ruff-0.9.7-py3-none-win32.whl", hash = "sha256:e9ece95b7de5923cbf38893f066ed2872be2f2f477ba94f826c8defdd6ec6b7d", size = 9988751 },
     { url = "https://files.pythonhosted.org/packages/6d/95/67153a838c6b6ba7a2401241fd8a00cd8c627a8e4a0491b8d853dedeffe0/ruff-0.9.7-py3-none-win_amd64.whl", hash = "sha256:3770fe52b9d691a15f0b87ada29c45324b2ace8f01200fb0c14845e499eb0c2c", size = 11002987 },
     { url = "https://files.pythonhosted.org/packages/63/6a/aca01554949f3a401991dc32fe22837baeaccb8a0d868256cbb26a029778/ruff-0.9.7-py3-none-win_arm64.whl", hash = "sha256:b075a700b2533feb7a01130ff656a4ec0d5f340bb540ad98759b8401c32c2037", size = 10177763 },
-]
-
-[[package]]
-name = "setuptools"
-version = "75.8.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d1/53/43d99d7687e8cdef5ab5f9ec5eaf2c0423c2b35133a2b7e7bc276fc32b21/setuptools-75.8.2.tar.gz", hash = "sha256:4880473a969e5f23f2a2be3646b2dfd84af9028716d398e46192f84bc36900d2", size = 1344083 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a9/38/7d7362e031bd6dc121e5081d8cb6aa6f6fedf2b67bf889962134c6da4705/setuptools-75.8.2-py3-none-any.whl", hash = "sha256:558e47c15f1811c1fa7adbd0096669bf76c1d3f433f58324df69f3f5ecac4e8f", size = 1229385 },
 ]
 
 [[package]]
