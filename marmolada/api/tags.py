@@ -196,3 +196,21 @@ async def put_tag(
     await db_session.refresh(tag, ["label_objs", "parents", "children"])
 
     return tag
+
+
+@router.get("/{uuid}/ancestors", response_model=CursorPage[schemas.TagResult])
+async def get_tag_ancestors(
+    uuid: UUID, db_session: Annotated[AsyncSession, Depends(req_db_session)]
+) -> list[Tag]:
+    tag = (await db_session.execute(select(Tag).filter_by(uuid=uuid))).unique().scalar_one()
+
+    return await paginate(db_session, tag.ancestors_query.order_by(Tag.created_at))
+
+
+@router.get("/{uuid}/descendants", response_model=CursorPage[schemas.TagResult])
+async def get_tag_descendants(
+    uuid: UUID, db_session: Annotated[AsyncSession, Depends(req_db_session)]
+) -> list[Tag]:
+    tag = (await db_session.execute(select(Tag).filter_by(uuid=uuid))).unique().scalar_one()
+
+    return await paginate(db_session, tag.descendants_query.order_by(Tag.created_at))
