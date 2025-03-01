@@ -31,18 +31,7 @@ async def get_tags(
 
 @router.get("/{uuid}", response_model=schemas.TagResult)
 async def get_tag(uuid: UUID, db_session: Annotated[AsyncSession, Depends(req_db_session)]) -> Tag:
-    tag = (
-        (
-            await db_session.execute(
-                # select(Tag).filter_by(uuid=uuid).options(
-                #     selectinload(Tag.parents, Tag.children, Tag.label_objs)
-                # )
-                select(Tag).filter_by(uuid=uuid)
-            )
-        )
-        .unique()
-        .scalar_one()
-    )
+    tag = (await db_session.execute(select(Tag).filter_by(uuid=uuid))).unique().scalar_one()
 
     # This is because selectinload() above isn’t effective.
     await asyncio.gather(tag.awaitable_attrs.parents, tag.awaitable_attrs.children)
