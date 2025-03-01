@@ -179,3 +179,43 @@ class TestTags:
                 assert children == {child_tag}
             else:
                 assert children == set()
+
+    async def test_get_ancestors(
+        self,
+        client: AsyncClient,
+        db_test_data_objs: dict[str, list[Base]],
+        db_session: AsyncSession,
+    ):
+        tags = db_test_data_objs["tags"]
+        tag_uuids = [tag.uuid for tag in tags]
+        await tags[0].add_children(db_session, *tags[1:])
+        await db_session.commit()
+
+        resp = await client.get(f"{base.API_PREFIX}/tags/{tag_uuids[1]}/ancestors")
+        assert resp.status_code == status.HTTP_200_OK
+        result = resp.json()
+
+        items = result["items"]
+        assert len(items) == 1
+        assert items[0]["uuid"] == str(tags[0].uuid)
+        assert set(items[0]["children"]) == {f"/api/1/tags/{tag.uuid}" for tag in tags[1:]}
+
+    async def test_get_descendants(
+        self,
+        client: AsyncClient,
+        db_test_data_objs: dict[str, list[Base]],
+        db_session: AsyncSession,
+    ):
+        tags = db_test_data_objs["tags"]
+        tag_uuids = [tag.uuid for tag in tags]
+        await tags[2].add_parents(db_session, *tags[:2])
+        await db_session.commit()
+
+        resp = await client.get(f"{base.API_PREFIX}/tags/{tag_uuids[1]}/descendants")
+        assert resp.status_code == status.HTTP_200_OK
+        result = resp.json()
+
+        items = result["items"]
+        assert len(items) == 1
+        assert items[0]["uuid"] == str(tags[2].uuid)
+        assert set(items[0]["parents"]) == {f"/api/1/tags/{tag.uuid}" for tag in tags[:2]}
