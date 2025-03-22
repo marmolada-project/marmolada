@@ -494,7 +494,7 @@ dev = [
     { name = "pytest", specifier = ">=5.2.0,<9.0.0" },
     { name = "pytest-asyncio", specifier = ">=0.16.0,<0.26.0" },
     { name = "pytest-cov", specifier = ">=3.0.0,<7.0.0" },
-    { name = "pytest-postgresql", specifier = ">=5.0.0,<7.0.1" },
+    { name = "pytest-postgresql", specifier = ">=5.0.0,<7.0.2" },
     { name = "pytest-xdist", specifier = ">=3.5.0,<4.0.0" },
     { name = "ruff", specifier = ">=0.2.0,<0.11.1" },
     { name = "toml", specifier = ">=0.10.2,<0.11.0" },
@@ -746,7 +746,7 @@ wheels = [
 
 [[package]]
 name = "pytest-postgresql"
-version = "7.0.0"
+version = "7.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "mirakuru" },
@@ -755,9 +755,9 @@ dependencies = [
     { name = "psycopg" },
     { name = "pytest" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cf/87/aa071042c17b4d81def7ec2f90a929f881f2aa82ae0987f21a589aa20f84/pytest_postgresql-7.0.0.tar.gz", hash = "sha256:cf0016cee5d9ac06f50cfc61bb0597d1fa90780d77c4453bc18e4930cae04aaa", size = 49877 }
+sdist = { url = "https://files.pythonhosted.org/packages/b3/d3/93939d31f67066e9bd58de8fba35c6d455462cb4ee6814991bdd0286cf05/pytest_postgresql-7.0.1.tar.gz", hash = "sha256:7723dfbfc57ea6f6f9876c2828e7b36f8b0e60b6cb040b1ddd444a60eed06e0a", size = 50359 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/10/c3/e5099d7049e49a6beeaf6cac511ecd50013284200644285d761eae71d2ea/pytest_postgresql-7.0.0-py3-none-any.whl", hash = "sha256:aaebadbf060b85cca7755fdf5ed7aa2929edd0f842c9b7f56ffe1e58e0d3b749", size = 41266 },
+    { url = "https://files.pythonhosted.org/packages/54/33/d3127aa40b017b448a555509a51f8031a9abbca47d9eeb3dcec8fce4a41e/pytest_postgresql-7.0.1-py3-none-any.whl", hash = "sha256:cbc6a67bbad5128b1f00def8cca5cf597020acc79893723f7a9cb60981b6840f", size = 41310 },
 ]
 
 [[package]]
