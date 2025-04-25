@@ -473,7 +473,7 @@ requires-dist = [
     { name = "click", specifier = ">=8.0.3,<9.0.0" },
     { name = "click-plugins", specifier = ">=1.1.1,<2.0.0" },
     { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.95,<0.116.0" },
-    { name = "fastapi-pagination", extras = ["asyncpg", "sqlalchemy"], marker = "extra == 'api'", specifier = ">=0.12.17,<0.13.0" },
+    { name = "fastapi-pagination", extras = ["asyncpg", "sqlalchemy"], marker = "extra == 'api'", specifier = ">=0.12.17,<0.13.1" },
     { name = "greenlet", marker = "extra == 'api'", specifier = ">=3.0.0rc0,<4.0.0" },
     { name = "psycopg2", marker = "extra == 'api'", specifier = ">=2.9.6,<3.0.0" },
     { name = "pydantic", specifier = ">=2.5.3,<3.0.0" },
