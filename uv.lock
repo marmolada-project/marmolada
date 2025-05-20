@@ -496,7 +496,7 @@ dev = [
     { name = "pytest", specifier = ">=5.2.0,<9.0.0" },
     { name = "pytest-asyncio", specifier = ">=0.16.0,<0.26.1" },
     { name = "pytest-cov", specifier = ">=3.0.0,<7.0.0" },
-    { name = "pytest-postgresql", specifier = ">=5.0.0,<7.0.2" },
+    { name = "pytest-postgresql", specifier = ">=5.0.0,<7.0.3" },
     { name = "pytest-xdist", specifier = ">=3.5.0,<4.0.0" },
     { name = "ruff", specifier = ">=0.2.0,<0.11.11" },
     { name = "toml", specifier = ">=0.10.2,<0.11.0" },
@@ -765,7 +765,7 @@ wheels = [
 
 [[package]]
 name = "pytest-postgresql"
-version = "7.0.1"
+version = "7.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "mirakuru" },
@@ -774,9 +774,9 @@ dependencies = [
     { name = "psycopg" },
     { name = "pytest" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b3/d3/93939d31f67066e9bd58de8fba35c6d455462cb4ee6814991bdd0286cf05/pytest_postgresql-7.0.1.tar.gz", hash = "sha256:7723dfbfc57ea6f6f9876c2828e7b36f8b0e60b6cb040b1ddd444a60eed06e0a", size = 50359, upload-time = "2025-03-19T15:30:47.798Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/18/15/b3c07d1537c7608c3f45d3ee6f778a56b1daa480221bb500abc9e44e01a0/pytest_postgresql-7.0.2.tar.gz", hash = "sha256:57c8d3f7d4e91d0ea8b2eac786d04f60080fa6ed6e66f1f94d747c71c9e5a4f4", size = 50691, upload-time = "2025-05-17T20:17:59.227Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/54/33/d3127aa40b017b448a555509a51f8031a9abbca47d9eeb3dcec8fce4a41e/pytest_postgresql-7.0.1-py3-none-any.whl", hash = "sha256:cbc6a67bbad5128b1f00def8cca5cf597020acc79893723f7a9cb60981b6840f", size = 41310, upload-time = "2025-03-19T15:30:46.297Z" },
+    { url = "https://files.pythonhosted.org/packages/18/57/f2db5a80b10c3ac48ce41786cb9b14172f997509ee1b1055ab7db4238e5e/pytest_postgresql-7.0.2-py3-none-any.whl", hash = "sha256:0b0d31c51620a9c1d6be93286af354256bc58a47c379f56f4147b22da6e81fb5", size = 41447, upload-time = "2025-05-17T20:17:58.011Z" },
 ]
 
 [[package]]
