@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from anyio import Path as AsyncPath
 from sqlalchemy import ForeignKey, event
 from sqlalchemy.engine.default import DefaultExecutionContext
+from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import (
     Mapped,
@@ -17,13 +18,16 @@ from sqlalchemy.orm import (
     object_session,
     relationship,
 )
+from sqlalchemy.orm.collections import attribute_keyed_dict
 from sqlalchemy.sql import SQLColumnExpression
 
 from ...core.configuration import config
 from .. import Base
 from ..mixins import BigIntPrimaryKey, Creatable, Updatable, UuidAltKey
+from .metadata import ArtifactMetadata
 
 if TYPE_CHECKING:
+    from .metadata import JSONValue
     from .task import ArtifactTask, ImportTask
 
 log = logging.getLogger(__name__)
@@ -81,6 +85,15 @@ class Artifact(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
 
     source_uri: Mapped[str | None]
     file_name: Mapped[str]
+
+    metadata_objs: Mapped[dict[str, ArtifactMetadata]] = relationship(
+        back_populates="artifact",
+        collection_class=attribute_keyed_dict("name"),
+        cascade="all, delete-orphan",
+    )
+    metadata_: AssociationProxy[dict[str, "JSONValue"]] = association_proxy(
+        "metadata_objs", "value", creator=lambda k, v: ArtifactMetadata(name=k, value=v)
+    )
 
     tasks: Mapped[set["ArtifactTask"]] = relationship(back_populates="artifact")
 
