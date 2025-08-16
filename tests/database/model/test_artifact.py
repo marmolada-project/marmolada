@@ -3,11 +3,11 @@ from unittest import mock
 
 import pytest
 from anyio import Path as AsyncPath
-from sqlalchemy import select
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from marmolada.core.configuration import config
-from marmolada.database.model import Artifact, Import
+from marmolada.database.model import Artifact, ArtifactMetadata, Import
 
 from .common import ModelTestBase
 
@@ -148,3 +148,53 @@ class TestArtifact(ModelTestBase):
         elif testcase == "rollback":
             await db_session.rollback()
             assert not db_obj.full_path.exists()
+
+    async def test_metadata(self, db_session: AsyncSession):
+        import_ = Import()
+        metadata = {"boo": 5, "foo": "bar", "float": 0.5}
+
+        artifact1 = Artifact(import_=import_, file_name="DSC01234.JPG", metadata_=metadata)
+        db_session.add(artifact1)
+        await db_session.flush()
+
+        for name, value in metadata.items():
+            match value:
+                case int():
+                    typed_attr = "int_value"
+                case str():
+                    typed_attr = "str_value"
+                case float():
+                    typed_attr = "float_value"
+
+            assert getattr(artifact1.metadata_objs[name], typed_attr) == value
+            assert artifact1.metadata_[name] == value
+
+        artifact2 = Artifact(import_=import_, file_name="DSC06789.JPG", metadata_={"boo": 5})
+        db_session.add(artifact2)
+        await db_session.flush()
+
+        q = select(Artifact).filter(Artifact.metadata_objs.any(name="boo", numeric_value=5))
+        found_objs = (await db_session.execute(q)).scalars()
+
+        assert artifact1 in found_objs
+        assert artifact2 in found_objs
+
+        q = select(Artifact).filter(Artifact.metadata_objs.any(name="foo", value="bar"))
+        found_objs = (await db_session.execute(q)).scalars()
+
+        assert artifact1 in found_objs
+        assert artifact2 not in found_objs
+
+        q = select(Artifact).filter(
+            Artifact.metadata_.any(
+                and_(
+                    ArtifactMetadata.name == "float",
+                    ArtifactMetadata.numeric_value > 0.4,
+                    ArtifactMetadata.numeric_value < 0.6,
+                )
+            )
+        )
+        found_objs = (await db_session.execute(q)).scalars()
+
+        assert artifact1 in found_objs
+        assert artifact2 not in found_objs
