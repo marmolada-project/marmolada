@@ -5,7 +5,7 @@ from uuid import UUID
 from anyio import Path as AsyncPath
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, status
 from fastapi_pagination.cursor import CursorPage
-from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination.ext.sqlalchemy import apaginate
 from pydantic import AnyUrl
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -31,14 +31,14 @@ def _get_artifacts_query(import_uuid: UUID | None = None) -> Select:
 async def get_artifacts(
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
 ) -> CursorPage[Artifact]:
-    return await paginate(db_session, _get_artifacts_query())
+    return await apaginate(db_session, _get_artifacts_query())
 
 
 @imports_router.get("/{uuid}/artifacts", response_model=CursorPage[schemas.ArtifactResult])
 async def get_artifacts_for_import(
     uuid: UUID, db_session: Annotated[AsyncSession, Depends(req_db_session)]
 ) -> CursorPage[Artifact]:
-    return await paginate(db_session, _get_artifacts_query(uuid))
+    return await apaginate(db_session, _get_artifacts_query(uuid))
 
 
 @router.get("/{uuid}", response_model=schemas.ArtifactResult)

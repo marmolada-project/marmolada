@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.cursor import CursorPage
-from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination.ext.sqlalchemy import apaginate
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -20,7 +20,7 @@ router = APIRouter(prefix="/imports")
 async def get_imports(
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
 ) -> CursorPage[schemas.ImportResult]:
-    return await paginate(
+    return await apaginate(
         db_session,
         select(Import).order_by(Import.created_at).options(selectinload(Import.artifacts)),
     )
