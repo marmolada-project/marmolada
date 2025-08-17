@@ -4,7 +4,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_pagination.cursor import CursorPage
-from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination.ext.sqlalchemy import apaginate
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/tags")
 async def get_tags(
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
 ) -> CursorPage[schemas.TagResult]:
-    return await paginate(
+    return await apaginate(
         db_session,
         select(Tag)
         .order_by(Tag.created_at)
@@ -204,7 +204,7 @@ async def get_tag_ancestors(
 ) -> list[Tag]:
     tag = (await db_session.execute(select(Tag).filter_by(uuid=uuid))).unique().scalar_one()
 
-    return await paginate(db_session, tag.ancestors_query.order_by(Tag.created_at))
+    return await apaginate(db_session, tag.ancestors_query.order_by(Tag.created_at))
 
 
 @router.get("/{uuid}/descendants", response_model=CursorPage[schemas.TagResult])
@@ -213,4 +213,4 @@ async def get_tag_descendants(
 ) -> list[Tag]:
     tag = (await db_session.execute(select(Tag).filter_by(uuid=uuid))).unique().scalar_one()
 
-    return await paginate(db_session, tag.descendants_query.order_by(Tag.created_at))
+    return await apaginate(db_session, tag.descendants_query.order_by(Tag.created_at))
