@@ -183,6 +183,8 @@ class TestTaskPluginManager:
 
         out, err = capsys.readouterr()
 
+        assert not err
+
         if scope == "artifact":
             expected_output = [
                 f"Async artifact/test1.process({uuid})",
