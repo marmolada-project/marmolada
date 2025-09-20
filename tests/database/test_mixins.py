@@ -61,7 +61,7 @@ class TestUuidAltKey:
         assert isinstance(thing.uuid, uuid.UUID)
         assert thing.uuid.version == 1
 
-        with pytest.raises(AttributeError, match="Can’t modify Thing.uuid"):
+        with pytest.raises(AttributeError, match=r"Can’t modify Thing.uuid"):
             thing.uuid = 5
 
     async def test_class_attribute(self, db_session):
