@@ -3,6 +3,7 @@ branch = True
 source = marmolada
 omit =
     marmolada/database/migrations/env.py
+core = ctrace
 concurrency =
     greenlet
     thread
