@@ -149,15 +149,9 @@ class ArtifactResult(ArtifactPost, UUIDBaseModel):
 
 class QualifiedTagLabel(BaseModel):
     label: Annotated[str, Field(pattern=r"^\S+(?:\s\S+)*$", examples=["Cab", "Taxi"])]
-    languages: list[
-        Annotated[
-            str,
-            Field(
-                validation_alias="languages_by_iso_code",
-                pattern=r"^\S\S(?:_\S\S)?$",
-                examples=["en_US", "en_GB"],
-            ),
-        ]
+    languages: Annotated[
+        list[Annotated[str, Field(pattern=r"^\S\S(?:_\S\S)?$", examples=["en_US", "en_GB"])]],
+        Field(validation_alias="languages_by_iso_code"),
     ]
 
 
