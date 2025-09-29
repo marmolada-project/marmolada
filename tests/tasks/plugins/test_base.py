@@ -1,8 +1,7 @@
-from asyncio import iscoroutinefunction
 from contextlib import AbstractAsyncContextManager
 from functools import partial
 from importlib import metadata
-from inspect import isawaitable
+from inspect import isawaitable, iscoroutinefunction
 from types import ModuleType
 from unittest import mock
 from uuid import uuid4
