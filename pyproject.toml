@@ -37,14 +37,14 @@ dev = [
 
 [project.optional-dependencies]
 api = [
-    "fastapi<0.118,>=0.95",
+    "fastapi<0.119,>=0.95",
 	"uvicorn<0.38,>=0.16",
 	"python-multipart<0.0.21,>=0.0.6",
 	"SQLAlchemy<3.0.0,>=2.0.13",
 	"greenlet<4.0.0,>=3.0.0rc",
 	"psycopg2<3.0.0,>=2.9.6",
 	"asyncpg<0.31.0,>=0.27.0",
-	"fastapi-pagination[asyncpg,sqlalchemy]<0.14.2,>=0.13.0",
+	"fastapi-pagination[asyncpg,sqlalchemy]<0.14.3,>=0.13.0",
 	"arq<0.27.0,>=0.25.0",
 ]
 database = ["alembic<2.0.0,>=1.7.5"]
