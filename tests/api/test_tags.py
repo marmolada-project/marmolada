@@ -59,7 +59,7 @@ class TestTags:
 
         resp = await client.post(f"{base.API_PREFIX}/tags", json=body)
         if with_parents and tags_missing:
-            assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            assert resp.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
             return
 
         assert resp.status_code == status.HTTP_201_CREATED
@@ -146,7 +146,7 @@ class TestTags:
             return
 
         if (with_parents or with_children) and (other_tags_missing or with_cyclic_error):
-            assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            assert resp.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
             if other_tags_missing:
                 if with_parents:
                     assert f"Failure looking up parents: {parent_tag.uuid}" in result["detail"]

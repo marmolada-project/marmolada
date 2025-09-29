@@ -87,7 +87,7 @@ class TestImports:
             else:
                 mock_task_pool.enqueue_job.assert_awaited_once_with("process_import", import_.uuid)
         else:
-            assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+            assert resp.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
             assert result["detail"] == "Completed import can’t be set incomplete."
             mock_task_pool.enqueue_job.assert_not_awaited()
 

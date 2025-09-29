@@ -57,7 +57,7 @@ async def post_tag(
         p_uuid_set = {p.uuid for p in parents}
         if p_uuid_set != set(data.parents):
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail=(
                     "Failure looking up parents:"
                     + f" {', '.join(str(u) for u in set(data.parents) - p_uuid_set)}"
@@ -116,7 +116,7 @@ async def put_tag(
         p_uuid_set = {p.uuid for p in new_parents}
         if p_uuid_set != set(data.parents):
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail=(
                     "Failure looking up parents:"
                     + f" {', '.join(str(u) for u in set(data.parents) - p_uuid_set)}"
@@ -129,7 +129,7 @@ async def put_tag(
         try:
             await tag.add_parents(db_session, *add_parents)
         except TagCyclicGraphError as exc:
-            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.args[0]) from exc
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, detail=exc.args[0]) from exc
 
     if data.children is not None:
         new_children = set(
@@ -141,7 +141,7 @@ async def put_tag(
         c_uuid_set = {c.uuid for c in new_children}
         if c_uuid_set != set(data.children):
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail=(
                     "Failure looking up children:"
                     + f" {', '.join(str(u) for u in set(data.children) - c_uuid_set)}"
@@ -154,7 +154,7 @@ async def put_tag(
         try:
             await tag.add_children(db_session, *add_children)
         except TagCyclicGraphError as exc:
-            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.args[0]) from exc
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, detail=exc.args[0]) from exc
 
     if data.labels is not None:
         qualified_labels_after = [
