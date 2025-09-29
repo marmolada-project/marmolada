@@ -116,7 +116,7 @@ class TestArtifacts:
 
         if import_exists:
             if wrong_uri_host or wrong_uri_scheme or local_path_missing:
-                assert resp.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+                assert resp.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
                 assert result["detail"] == "source-uri must point to a local file on the server"
                 mock_task_pool.enqueue_job.assert_not_awaited()
             else:

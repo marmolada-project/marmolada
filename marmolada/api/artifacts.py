@@ -104,7 +104,7 @@ async def post_artifact_for_import_from_local_file(
         or not await (local_path := AsyncPath(data.source_uri.path)).exists()
     ):
         raise HTTPException(
-            status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="source-uri must point to a local file on the server",
         )
 

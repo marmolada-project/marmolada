@@ -72,7 +72,7 @@ async def put_import(
         try:
             setattr(import_, key, value)
         except ValueError as exc:
-            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)) from exc
 
     new_complete = import_.complete
 
