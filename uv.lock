@@ -239,7 +239,7 @@ wheels = [
 
 [[package]]
 name = "fastapi"
-version = "0.120.1"
+version = "0.120.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-doc" },
@@ -247,9 +247,9 @@ dependencies = [
     { name = "starlette" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/40/cc/28aff6e246ee85bd571b26e4a793b84d42700e3bdc3008c3d747eda7b06d/fastapi-0.120.1.tar.gz", hash = "sha256:b5c6217e9ddca6dfcf54c97986180d4a1955e10c693d74943fc5327700178bff", size = 337616, upload-time = "2025-10-27T17:53:42.954Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/85/c6/f324c07f5ebe34237b56b6396a94568d2d4a705df8a2ff82fa45029e7252/fastapi-0.120.3.tar.gz", hash = "sha256:17db50718ee86c9e01e54f9d8600abf130f6f762711cd0d8f02eb392668271ba", size = 339363, upload-time = "2025-10-30T20:41:33.072Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7e/bb/1a74dbe87e9a595bf63052c886dfef965dc5b91d149456a8301eb3d41ce2/fastapi-0.120.1-py3-none-any.whl", hash = "sha256:0e8a2c328e96c117272d8c794d3a97d205f753cc2e69dd7ee387b7488a75601f", size = 108254, upload-time = "2025-10-27T17:53:40.076Z" },
+    { url = "https://files.pythonhosted.org/packages/37/3a/1eef3ab55ede5af09186723898545a94d0a32b7ac9ea4e7af7bcb95f132a/fastapi-0.120.3-py3-none-any.whl", hash = "sha256:bfee21c98db9128dc425a686eafd14899e26e4471aab33076bff2427fd6dcd22", size = 108255, upload-time = "2025-10-30T20:41:31.247Z" },
 ]
 
 [[package]]
@@ -596,14 +596,14 @@ dev = [
 
 [[package]]
 name = "mirakuru"
-version = "2.6.1"
+version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "psutil", marker = "sys_platform != 'cygwin'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f9/57/bfa1e5b904b18f669e03b7c6981bb92fb473b7da9c3b082a875e25bfaa8c/mirakuru-2.6.1.tar.gz", hash = "sha256:95d4f5a5ad406a625e9ca418f20f8e09386a35dad1ea30fd9073e0ae93f712c7", size = 26889, upload-time = "2025-07-02T07:18:41.234Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6a/90/fa19eb0678c11e778e464659bc56b3c208b94503a8e8ce6c1646655b18b8/mirakuru-3.0.0.tar.gz", hash = "sha256:8621706f40bd12182a6d785005be64d72ed355390f1d0701ce8f745ee47a10a5", size = 28919, upload-time = "2025-10-29T21:39:00.891Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b8/ce/139df7074328119869a1041ce91c082d78287541cf867f9c4c85097c5d8b/mirakuru-2.6.1-py3-none-any.whl", hash = "sha256:4be0bfd270744454fa0c0466b8127b66bd55f4decaf05bbee9b071f2acbd9473", size = 26202, upload-time = "2025-07-02T07:18:39.951Z" },
+    { url = "https://files.pythonhosted.org/packages/2c/bc/fdcd9ba2703e031b1613a541fce9760a422a252042f2ba3d20b265bd5b47/mirakuru-3.0.0-py3-none-any.whl", hash = "sha256:99cd12532908e7e5e581034317843113884676a295b47747e685e9fa35235228", size = 27414, upload-time = "2025-10-29T21:38:59.952Z" },
 ]
 
 [[package]]
@@ -1236,14 +1236,14 @@ wheels = [
 
 [[package]]
 name = "virtualenv"
-version = "20.35.3"
+version = "20.35.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "distlib" },
     { name = "filelock" },
     { name = "platformdirs" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a4/d5/b0ccd381d55c8f45d46f77df6ae59fbc23d19e901e2d523395598e5f4c93/virtualenv-20.35.3.tar.gz", hash = "sha256:4f1a845d131133bdff10590489610c98c168ff99dc75d6c96853801f7f67af44", size = 6002907, upload-time = "2025-10-10T21:23:33.178Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/20/28/e6f1a6f655d620846bd9df527390ecc26b3805a0c5989048c210e22c5ca9/virtualenv-20.35.4.tar.gz", hash = "sha256:643d3914d73d3eeb0c552cbb12d7e82adf0e504dbf86a3182f8771a153a1971c", size = 6028799, upload-time = "2025-10-29T06:57:40.511Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/27/73/d9a94da0e9d470a543c1b9d3ccbceb0f59455983088e727b8a1824ed90fb/virtualenv-20.35.3-py3-none-any.whl", hash = "sha256:63d106565078d8c8d0b206d48080f938a8b25361e19432d2c9db40d2899c810a", size = 5981061, upload-time = "2025-10-10T21:23:30.433Z" },
+    { url = "https://files.pythonhosted.org/packages/79/0c/c05523fa3181fdf0c9c52a6ba91a23fbf3246cc095f26f6516f9c60e6771/virtualenv-20.35.4-py3-none-any.whl", hash = "sha256:c21c9cede36c9753eeade68ba7d523529f228a403463376cf821eaae2b650f1b", size = 6005095, upload-time = "2025-10-29T06:57:37.598Z" },
 ]
