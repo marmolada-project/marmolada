@@ -11,6 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from marmolada.api import base
+from marmolada.api.artifacts import process_artifact
 from marmolada.database import Base
 from marmolada.database.model import Artifact
 
@@ -61,7 +62,6 @@ class TestArtifacts:
         tmp_path: Path,
         client: AsyncClient,
         db_session: AsyncSession,
-        mock_task_pool: mock.AsyncMock,
     ):
         from_upload = "from-upload" in testcase
         import_exists = "import-missing" not in testcase
@@ -107,7 +107,10 @@ class TestArtifacts:
                 }
             }
 
-        with patch_context as hardlink_to:
+        with (
+            patch_context as hardlink_to,
+            mock.patch.object(process_artifact, "kiq") as process_artifact_kiq,
+        ):
             if hardlink_failing:
                 hardlink_to.side_effect = OSError("BOO")
             resp = await client.post(f"{base.API_PREFIX}/{endpoint}", **kwargs)
@@ -118,7 +121,7 @@ class TestArtifacts:
             if wrong_uri_host or wrong_uri_scheme or local_path_missing:
                 assert resp.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
                 assert result["detail"] == "source-uri must point to a local file on the server"
-                mock_task_pool.enqueue_job.assert_not_awaited()
+                process_artifact_kiq.assert_not_awaited()
             else:
                 assert resp.status_code == status.HTTP_201_CREATED
 
@@ -136,10 +139,8 @@ class TestArtifacts:
                     else:
                         assert artifact.full_path.stat().st_nlink == 2
 
-                mock_task_pool.enqueue_job.assert_awaited_once_with(
-                    "process_artifact", artifact.uuid
-                )
+                process_artifact_kiq.assert_awaited_once_with(artifact.uuid)
         else:
             assert resp.status_code == status.HTTP_404_NOT_FOUND
             assert result["detail"] == "import not found"
-            mock_task_pool.enqueue_job.assert_not_awaited()
+            process_artifact_kiq.assert_not_awaited()
