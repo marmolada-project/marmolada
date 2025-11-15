@@ -1,5 +1,3 @@
-from unittest import mock
-
 import pytest
 from fastapi import status
 from httpx import AsyncClient
@@ -105,7 +103,6 @@ class TestTags:
         client: AsyncClient,
         db_test_data_objs: dict[str, list[Base]],
         db_session: AsyncSession,
-        mock_task_pool: mock.AsyncMock,
     ):
         parent_tag, tag, child_tag = db_test_data_objs["tags"][:3]
 

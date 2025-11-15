@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from marmolada.api import base
+from marmolada.api.imports import process_import
 from marmolada.database import Base
 from marmolada.database.model import Import
 
@@ -49,7 +50,7 @@ class TestImports:
                 assert import_.meta == {}
 
     @pytest.mark.parametrize(
-        "testcase", ("success-happy-path", "success-noop", "failure-cant-uncomplete")
+        "testcase", ("success-happy-path", "success-noop", "failure-cant-unset-complete")
     )
     async def test_put(
         self,
@@ -57,14 +58,13 @@ class TestImports:
         client: AsyncClient,
         db_test_data_objs: dict[str, list[Base]],
         db_session: AsyncSession,
-        mock_task_pool: mock.AsyncMock,
     ):
         import_ = db_test_data_objs["imports"][0]
 
         success = "success" in testcase
         noop = "noop" in testcase
-        cant_uncomplete = "cant-uncomplete" in testcase
-        expected_import_complete = (success and not noop) or cant_uncomplete
+        cant_unset_complete = "cant-unset-complete" in testcase
+        expected_import_complete = (success and not noop) or cant_unset_complete
 
         desired_complete = False
         if success:
@@ -74,22 +74,23 @@ class TestImports:
             async with db_session.begin():
                 import_._complete = False
 
-        resp = await client.put(
-            f"{base.API_PREFIX}/imports/{import_.uuid}", json={"complete": desired_complete}
-        )
+        with mock.patch.object(process_import, "kiq") as process_import_kiq:
+            resp = await client.put(
+                f"{base.API_PREFIX}/imports/{import_.uuid}", json={"complete": desired_complete}
+            )
 
         result = resp.json()
         if success:
             assert resp.status_code == status.HTTP_200_OK
             assert result["complete"] is desired_complete
             if noop:
-                mock_task_pool.enqueue_job.assert_not_awaited()
+                process_import_kiq.assert_not_awaited()
             else:
-                mock_task_pool.enqueue_job.assert_awaited_once_with("process_import", import_.uuid)
+                process_import_kiq.assert_awaited_once_with(import_.uuid)
         else:
             assert resp.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
             assert result["detail"] == "Completed import can’t be set incomplete."
-            mock_task_pool.enqueue_job.assert_not_awaited()
+            process_import_kiq.assert_not_awaited()
 
         async with db_session.begin():
             await db_session.refresh(import_)

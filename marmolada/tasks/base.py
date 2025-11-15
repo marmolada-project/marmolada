@@ -1,64 +1,43 @@
+import json
 import logging
-from typing import TYPE_CHECKING
+import os
 
-from arq import create_pool
-from arq.connections import ArqRedis, RedisSettings
-
-if TYPE_CHECKING:
-    from arq.typing import WorkerSettingsType
+from taskiq import AsyncBroker
+from taskiq.brokers.shared_broker import async_shared_broker
+from taskiq_redis import RedisStreamBroker
 
 from .. import database
 from ..core.configuration import config
 from . import main
 from .plugins import TaskPluginManager
-from .typing import Context
 
 log = logging.getLogger(__name__)
-task_pool: ArqRedis | None = None
 
 
-def get_redis_settings() -> RedisSettings:
-    redis_settings = config["tasks"]["arq"]["redis_settings"] or {}
-    return RedisSettings(**redis_settings)
+def configure_broker() -> AsyncBroker:
+    log.info("Configuring broker …")
+
+    broker_url = config["tasks"]["taskiq"]["broker_url"]
+    configured_broker = RedisStreamBroker(broker_url)
+    async_shared_broker.default_broker(configured_broker)
+
+    log.info("Done configuring broker.")
+
+    return configured_broker
 
 
-async def get_task_pool() -> ArqRedis:
-    global task_pool
+def setup_broker_listen() -> AsyncBroker:
+    log.info("Setting up broker to listen …")
 
-    if not task_pool:
-        task_pool = await create_pool(get_redis_settings())
+    config.clear()
+    config.update(json.loads(os.environ["MARMOLADA_CONFIG_JSON"]))
 
-    return task_pool
-
-
-async def startup_task_worker(ctx: Context) -> None:
-    log.info("Task worker starting up…")
+    configured_broker = configure_broker()
 
     database.init_model()
     main.plugin_mgr = TaskPluginManager()
     main.plugin_mgr.discover_plugins()
 
-    log.info("Task worker started up.")
+    log.info("Done setting up broker to listen.")
 
-
-async def shutdown_task_worker(ctx: Context) -> None:
-    log.info("Task worker shutting down…")
-
-    ...
-
-    log.info("Task worker shut down.")
-
-
-def get_worker_settings() -> "WorkerSettingsType":
-    class WorkerSettings:
-        redis_settings = get_redis_settings()
-
-        functions = (
-            main.process_artifact,
-            main.process_import,
-        )
-
-        on_startup = startup_task_worker
-        on_shutdown = shutdown_task_worker
-
-    return WorkerSettings
+    return configured_broker
