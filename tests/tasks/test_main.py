@@ -17,7 +17,7 @@ def plugin_mgr():
 async def test_process_artifact(plugin_mgr):
     uuid = uuid1()
 
-    await main.process_artifact(TEST_CTX, uuid)
+    await main.process_artifact(uuid)
 
     plugin_mgr.process_scope.assert_called_once_with(scope="artifact", uuid=uuid)
 
@@ -25,6 +25,6 @@ async def test_process_artifact(plugin_mgr):
 async def test_process_import(plugin_mgr):
     uuid = uuid1()
 
-    await main.process_import(TEST_CTX, uuid)
+    await main.process_import(uuid)
 
     plugin_mgr.process_scope.assert_called_once_with(scope="import", uuid=uuid)

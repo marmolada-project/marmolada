@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from marmolada.api import base
+from marmolada.api.imports import process_import
 from marmolada.database import Base
 from marmolada.database.model import Import
 
@@ -73,22 +74,23 @@ class TestImports:
             async with db_session.begin():
                 import_._complete = False
 
-        resp = await client.put(
-            f"{base.API_PREFIX}/imports/{import_.uuid}", json={"complete": desired_complete}
-        )
+        with mock.patch.object(process_import, "kiq") as process_import_kiq:
+            resp = await client.put(
+                f"{base.API_PREFIX}/imports/{import_.uuid}", json={"complete": desired_complete}
+            )
 
         result = resp.json()
         if success:
             assert resp.status_code == status.HTTP_200_OK
             assert result["complete"] is desired_complete
             if noop:
-                mock_task_pool.enqueue_job.assert_not_awaited()
+                process_import_kiq.assert_not_awaited()
             else:
-                mock_task_pool.enqueue_job.assert_awaited_once_with("process_import", import_.uuid)
+                process_import_kiq.assert_awaited_once_with(import_.uuid)
         else:
             assert resp.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
             assert result["detail"] == "Completed import can’t be set incomplete."
-            mock_task_pool.enqueue_job.assert_not_awaited()
+            process_import_kiq.assert_not_awaited()
 
         async with db_session.begin():
             await db_session.refresh(import_)

@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from ..database.model import Artifact, Import
-from ..tasks.base import ArqRedis, get_task_pool
+from ..tasks import process_artifact
 from . import schemas
 from .database import req_db_session
 from .imports import router as imports_router
@@ -61,7 +61,6 @@ async def post_artifact_for_import(
     uuid: UUID,
     file: UploadFile,
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
-    task_pool: Annotated[ArqRedis, Depends(get_task_pool)],
     source_uri: Annotated[AnyUrl | None, Query(alias="source-uri")] = None,
 ) -> Artifact:
     import_ = (await db_session.execute(select(Import).filter_by(uuid=uuid))).scalar_one_or_none()
@@ -82,7 +81,7 @@ async def post_artifact_for_import(
 
     await db_session.commit()
 
-    await task_pool.enqueue_job("process_artifact", artifact.uuid)
+    await process_artifact.kiq(artifact.uuid)
 
     return artifact
 
@@ -96,7 +95,6 @@ async def post_artifact_for_import_from_local_file(
     uuid: UUID,
     data: schemas.ArtifactPostLocal,
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
-    task_pool: Annotated[ArqRedis, Depends(get_task_pool)],
 ) -> Artifact:
     if (
         data.source_uri.scheme != "file"
@@ -136,6 +134,6 @@ async def post_artifact_for_import_from_local_file(
 
     await db_session.commit()
 
-    await task_pool.enqueue_job("process_artifact", artifact.uuid)
+    await process_artifact.kiq(artifact.uuid)
 
     return artifact

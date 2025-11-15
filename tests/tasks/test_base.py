@@ -1,79 +1,60 @@
+import json
 from unittest import mock
 
 import pytest
 
-from marmolada.tasks import base, main
+from marmolada.tasks import base
 
 TEST_CONFIG = {
     "tasks": {
-        "arq": {
-            "redis_settings": {
-                "host": "foo.example.com",
-                "port": 63790,
-            }
+        "taskiq": {
+            "broker_url": "redis://foo.example.com:63790",
         }
     }
 }
 
 
 @pytest.mark.marmolada_config(TEST_CONFIG)
-def test_get_redis_settings():
-    redis_settings = base.get_redis_settings()
-    assert redis_settings.host == TEST_CONFIG["tasks"]["arq"]["redis_settings"]["host"]
-    assert redis_settings.port == TEST_CONFIG["tasks"]["arq"]["redis_settings"]["port"]
-
-
-async def test_get_taskpool():
+def test_configure_broker():
     with (
-        mock.patch.object(base, "task_pool"),
-        mock.patch.object(base, "create_pool") as create_pool,
-        mock.patch.object(base, "get_redis_settings") as get_redis_settings,
+        mock.patch.object(base, "RedisStreamBroker") as RedisStreamBroker,
+        mock.patch.object(base, "async_shared_broker") as async_shared_broker,
     ):
-        base.task_pool = None
-        get_redis_settings.return_value = redis_settings = object()
-        create_pool.return_value = create_pool_retval = object()
-
-        task_pool = await base.get_task_pool()
-
-        assert task_pool is create_pool_retval
-        create_pool.assert_awaited_once_with(redis_settings)
-
-        create_pool.reset_mock()
-
-        task_pool = await base.get_task_pool()
-
-        assert task_pool is create_pool_retval
-        create_pool.assert_not_awaited()
+        RedisStreamBroker.return_value = sentinel = object()
+        assert base.configure_broker() is sentinel
+        RedisStreamBroker.assert_called_once_with(TEST_CONFIG["tasks"]["taskiq"]["broker_url"])
+        async_shared_broker.default_broker.assert_called_once_with(sentinel)
 
 
-async def test_startup_task_worker(caplog):
-    ctx = object()
+@pytest.mark.marmolada_config(TEST_CONFIG)
+def test_setup_broker_listen():
+    PASSED_CONFIG = {
+        "tasks": {
+            "taskiq": {
+                "broker_url": "redis://bar.example.com:1234",
+            }
+        }
+    }
 
-    with mock.patch.object(base, "database") as database, caplog.at_level("DEBUG"):
-        await base.startup_task_worker(ctx)
+    with (
+        mock.patch.dict("os.environ", clear=True, MARMOLADA_CONFIG_JSON=json.dumps(PASSED_CONFIG)),
+        mock.patch.object(base, "config") as config,
+        mock.patch.object(base, "configure_broker") as configure_broker,
+        mock.patch.object(base, "database") as database,
+        mock.patch.object(base, "main") as base_main,
+        mock.patch.object(base, "TaskPluginManager") as TaskPluginManager,
+    ):
+        configure_broker.return_value = expected_configured_broker = object()
+        TaskPluginManager.return_value = task_plugin_mgr = mock.Mock()
 
-    database.init_model.assert_called_once_with()
+        configured_broker = base.setup_broker_listen()
 
-    assert "Task worker starting up…" in caplog.text
-    assert "Task worker started up." in caplog.text
-
-
-async def test_shutdown_task_worker(caplog):
-    ctx = object()
-
-    with caplog.at_level("DEBUG"):
-        await base.shutdown_task_worker(ctx)
-
-    assert "Task worker shutting down…" in caplog.text
-    assert "Task worker shut down." in caplog.text
-
-
-def test_get_worker_settings():
-    with mock.patch.object(base, "get_redis_settings") as get_redis_settings:
-        get_redis_settings.return_value = sentinel = object()
-
-        worker_settings = base.get_worker_settings()
-
-    assert worker_settings.redis_settings is sentinel
-    assert main.process_artifact in worker_settings.functions
-    assert main.process_import in worker_settings.functions
+        assert configured_broker is expected_configured_broker
+        assert config.mock_calls == [
+            mock.call.clear(),
+            mock.call.update(PASSED_CONFIG),
+        ]
+        configure_broker.assert_called_once_with()
+        database.init_model.assert_called_once_with()
+        assert base_main.plugin_mgr is task_plugin_mgr
+        task_plugin_mgr.discover_plugins.assert_called_once_with()

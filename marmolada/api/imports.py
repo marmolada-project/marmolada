@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from ..database.model import Import
-from ..tasks.base import ArqRedis, get_task_pool
+from ..tasks import process_import
 from . import schemas
 from .database import req_db_session
 
@@ -58,7 +58,6 @@ async def put_import(
     uuid: UUID,
     data: schemas.ImportPut,
     db_session: Annotated[AsyncSession, Depends(req_db_session)],
-    task_pool: Annotated[ArqRedis, Depends(get_task_pool)],
 ) -> Import:
     import_ = (
         await db_session.execute(
@@ -79,6 +78,6 @@ async def put_import(
     await db_session.commit()
 
     if not old_complete and new_complete:
-        await task_pool.enqueue_job("process_import", import_.uuid)
+        await process_import.kiq(import_.uuid)
 
     return import_
