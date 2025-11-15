@@ -49,7 +49,7 @@ class TestImports:
                 assert import_.meta == {}
 
     @pytest.mark.parametrize(
-        "testcase", ("success-happy-path", "success-noop", "failure-cant-uncomplete")
+        "testcase", ("success-happy-path", "success-noop", "failure-cant-unset-complete")
     )
     async def test_put(
         self,
@@ -57,14 +57,13 @@ class TestImports:
         client: AsyncClient,
         db_test_data_objs: dict[str, list[Base]],
         db_session: AsyncSession,
-        mock_task_pool: mock.AsyncMock,
     ):
         import_ = db_test_data_objs["imports"][0]
 
         success = "success" in testcase
         noop = "noop" in testcase
-        cant_uncomplete = "cant-uncomplete" in testcase
-        expected_import_complete = (success and not noop) or cant_uncomplete
+        cant_unset_complete = "cant-unset-complete" in testcase
+        expected_import_complete = (success and not noop) or cant_unset_complete
 
         desired_complete = False
         if success:
