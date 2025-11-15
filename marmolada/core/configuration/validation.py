@@ -20,34 +20,33 @@ class LogLevel(str, Enum):
 PostgreSQLDsn = Annotated[
     AnyUrl, UrlConstraints(allowed_schemes=["postgresql"], host_required=False)
 ]
+RedisDsn = Annotated[AnyUrl, UrlConstraints(allowed_schemes=["redis"], host_required=True)]
 
 
 # Pydantic models
 
 
-class ArqRedisSettings(BaseModel):
-    host: str = "localhost"
-    port: int = 6379
+class TaskiqWorkerSettings(BaseModel):
+    workers: int | None = None
+    max_threadpool_threads: int | None = None
+    shutdown_timeout: float | None = None
+    max_async_tasks: int | None = None
+    max_prefetch: int | None = None
+    max_fails: int | None = None
+    max_tasks_per_child: int | None = None
+    wait_tasks_timeout: float | None = None
+    hardkill_count: int | None = None
+    use_process_pool: bool | None = None
+    max_process_pool_processes: int | None = None
 
 
-class ArqWorkerSettings(BaseModel):
-    queue_name: str = "marmolada.tasks"
-    max_jobs: int | None = None
-    job_timeout: int | float = 300
-    poll_delay: int | float = 0.5
-    queue_read_limit: int | None = None
-    max_tries: int = 5
-    health_check_interval: int = 3600
-    health_check_key: str | None = None
-
-
-class ArqModel(BaseModel):
-    redis_settings: ArqRedisSettings | None = ArqRedisSettings()
-    worker_settings: ArqWorkerSettings | None = ArqWorkerSettings()
+class TaskiqModel(BaseModel):
+    broker_url: RedisDsn
+    worker_settings: TaskiqWorkerSettings | None = TaskiqWorkerSettings()
 
 
 class TasksModel(BaseModel):
-    arq: ArqModel
+    taskiq: TaskiqModel
 
 
 class SQLAlchemyModel(BaseModel):
@@ -81,7 +80,10 @@ class ConfigModel(BaseSettings):
     database: DatabaseModel | None = None
     tasks: TasksModel | None = None
 
-    model_config = SettingsConfigDict(env_prefix="marmolada_", env_nested_delimiter="__")
+    model_config = SettingsConfigDict(
+        env_prefix="marmolada_",
+        env_nested_delimiter="__",
+    )
 
     @classmethod
     def settings_customise_sources(

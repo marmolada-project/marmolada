@@ -38,17 +38,22 @@ dev = [
 [project.optional-dependencies]
 api = [
     "fastapi<0.122,>=0.95",
-	"uvicorn<0.39,>=0.16",
-	"python-multipart<0.0.21,>=0.0.6",
-	"SQLAlchemy<3.0.0,>=2.0.13",
-	"greenlet<4.0.0,>=3.0.0rc",
-	"psycopg2<3.0.0,>=2.9.6",
-	"asyncpg<0.31.0,>=0.27.0",
-	"fastapi-pagination[asyncpg,sqlalchemy]<0.15.1,>=0.13.0",
-	"arq<0.27.0,>=0.25.0",
+    "uvicorn<0.39,>=0.16",
+    "python-multipart<0.0.21,>=0.0.6",
+    "SQLAlchemy<3.0.0,>=2.0.13",
+    "greenlet<4.0.0,>=3.0.0rc",
+    "psycopg2<3.0.0,>=2.9.6",
+    "asyncpg<0.31.0,>=0.27.0",
+    "fastapi-pagination[asyncpg,sqlalchemy]<0.15.1,>=0.13.0",
+    "taskiq<0.12,>=0.11.20",
+    "taskiq-redis>=1.1.2",
+    "taskiq-fastapi>=0.3.6",
 ]
 database = ["alembic<2.0.0,>=1.7.5"]
-tasks = ["pyxdg<0.29.0,>=0.28.0"]
+tasks = [
+    "pyxdg<0.29.0,>=0.28.0",
+    "taskiq-redis>=1.1.2",
+]
 
 [project.scripts]
 marmolada = "marmolada.core.cli:cli"

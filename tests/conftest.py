@@ -68,7 +68,7 @@ def marmolada_config_files(
                     configs.append((objtype, EXAMPLE_CONFIG_SENTINEL))
 
                 for content in marker.args:
-                    assert any(isinstance(content, t) for t in (dict, str))
+                    assert isinstance(content, (dict, str))
                     if objtype == "env" and isinstance(content, str):
                         assert "=" in content
                     configs.append((objtype, content))

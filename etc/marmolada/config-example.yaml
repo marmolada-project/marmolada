@@ -11,19 +11,18 @@ artifacts:
   root: "/var/lib/marmolada/artifacts"
 
 tasks:
-  arq:
-    redis_settings:
-      # host: "localhost"
-      # port: 6379
+  taskiq:
+    broker_url: redis://localhost:6379
+
     worker_settings:
-      # queue_name: "marmolada.tasks"
-      # max_jobs: <number of CPUs>
-      # job_timeout: 300  # max runtime (s)
-      # poll_delay: 0.5  # duration between polling the queue for new jobs (s)
-      # queue_read_limit:  # the maximum number of jobs to pull from the queue
-      #                    # each time it’s polled. By default it equals
-      #                    # max_jobs * 5, or 100; whichever is higher.
-      # max_tries: 5  # default maximum number of times to retry a job
-      # health_check_interval: 3600  # how often to set the health check key
-      # health_check_key: "<queue_name>:health-check"
-      #                      # redis key under which health check is set
+      # workers: 2
+      # max_threadpool_threads: …
+      # shutdown_timeout: 5
+      # max_async_tasks: 100
+      # max_prefetch: 0
+      # max_fails: -1
+      # max_tasks_per_child: …
+      # wait_tasks_timeout": …
+      # hardkill_count": 3
+      # use_process_pool": false
+      # max_process_pool_processes": …
