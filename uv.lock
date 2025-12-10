@@ -357,7 +357,7 @@ wheels = [
 
 [[package]]
 name = "fastapi"
-version = "0.123.10"
+version = "0.124.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-doc" },
@@ -365,23 +365,23 @@ dependencies = [
     { name = "starlette" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/22/ff/e01087de891010089f1620c916c0c13130f3898177955c13e2b02d22ec4a/fastapi-0.123.10.tar.gz", hash = "sha256:624d384d7cda7c096449c889fc776a0571948ba14c3c929fa8e9a78cd0b0a6a8", size = 356360, upload-time = "2025-12-05T21:27:46.237Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/58/b7/4dbca3f9d847ba9876dcb7098c13a4c6c86ee8db148c923fab78e27748d3/fastapi-0.124.2.tar.gz", hash = "sha256:72e188f01f360e2f59da51c8822cbe4bca210c35daaae6321b1b724109101c00", size = 361867, upload-time = "2025-12-10T12:10:10.676Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d7/f0/7cb92c4a720def85240fd63fbbcf147ce19e7a731c8e1032376bb5a486ac/fastapi-0.123.10-py3-none-any.whl", hash = "sha256:0503b7b7bc71bc98f7c90c9117d21fdf6147c0d74703011b87936becc86985c1", size = 111774, upload-time = "2025-12-05T21:27:44.78Z" },
+    { url = "https://files.pythonhosted.org/packages/25/c5/8a5231197b81943b2df126cc8ea2083262e004bee3a39cf85a471392d145/fastapi-0.124.2-py3-none-any.whl", hash = "sha256:6314385777a507bb19b34bd064829fddaea0eea54436deb632b5de587554055c", size = 112711, upload-time = "2025-12-10T12:10:08.855Z" },
 ]
 
 [[package]]
 name = "fastapi-pagination"
-version = "0.15.1"
+version = "0.15.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fastapi" },
     { name = "pydantic" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7e/8e/1d2f046a667788c6cd7e925668556efe371813fe19b3a1ed63b754ea94a9/fastapi_pagination-0.15.1.tar.gz", hash = "sha256:29fe3fb49c61e0a6d8340afe7d10588d5818caa9786339a9b1468df519e6a5e9", size = 571290, upload-time = "2025-12-03T17:03:55.634Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6a/8e/3f9b6980123a7003ca0fb0696f20a4308380f704603a600e6f0425f778c4/fastapi_pagination-0.15.2.tar.gz", hash = "sha256:e804014e853773a7c036b2e97379e79aab6715b8cb883d8ae251697d97b25223", size = 571283, upload-time = "2025-12-06T13:54:20.002Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/63/11/74c9926ceab00d2e17327ee21188f566ae093d5783548884434484a71b91/fastapi_pagination-0.15.1-py3-none-any.whl", hash = "sha256:d2a22a090db948ec9276bf0464e83be52aaea28109295e695c9e655d9a7da3b4", size = 56108, upload-time = "2025-12-03T17:03:57.503Z" },
+    { url = "https://files.pythonhosted.org/packages/ea/db/9430508035b18d905e898deb91be21afbad9c8016b59e29d13879e8100c8/fastapi_pagination-0.15.2-py3-none-any.whl", hash = "sha256:f8763a2e1caafe9c2a10ac860d6403935c31a067ffd6e93e57811bfec9873d87", size = 56106, upload-time = "2025-12-06T13:54:18.643Z" },
 ]
 
 [package.optional-dependencies]
@@ -728,8 +728,8 @@ requires-dist = [
     { name = "asyncpg", marker = "extra == 'api'", specifier = ">=0.27.0,<0.31.1" },
     { name = "click", specifier = ">=8.0.3,<9.0.0" },
     { name = "click-plugins", specifier = ">=1.1.1,<2.0.0" },
-    { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.95,<0.124" },
-    { name = "fastapi-pagination", extras = ["asyncpg", "sqlalchemy"], marker = "extra == 'api'", specifier = ">=0.13.0,<0.15.2" },
+    { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.95,<0.125" },
+    { name = "fastapi-pagination", extras = ["asyncpg", "sqlalchemy"], marker = "extra == 'api'", specifier = ">=0.13.0,<0.15.3" },
     { name = "greenlet", marker = "extra == 'api'", specifier = ">=3.0.0rc0,<4.0.0" },
     { name = "psycopg2", marker = "extra == 'api'", specifier = ">=2.9.6,<3.0.0" },
     { name = "pydantic", specifier = ">=2.5.3,<3.0.0" },
