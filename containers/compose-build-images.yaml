@@ -1,0 +1,21 @@
+name: marmolada
+services:
+  base:
+    build:
+      context: ..
+      dockerfile: containers/Containerfile.base
+
+  db-chores:
+    build:
+      context: ..
+      dockerfile: containers/Containerfile.db-chores
+
+  api:
+    build:
+      context: ..
+      dockerfile: containers/Containerfile.api
+
+  tasks:
+    build:
+      context: ..
+      dockerfile: containers/Containerfile.tasks
