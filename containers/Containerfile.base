@@ -1,0 +1,20 @@
+FROM registry.fedoraproject.org/fedora-minimal:40
+
+RUN dnf5 -y update && dnf5 install -y \
+    file-libs \
+    gcc \
+    libpq-devel \
+    poetry \
+    python3-devel
+
+RUN poetry config installer.max-workers 10
+
+COPY LICENSE LICENSE.MIT poetry.lock pyproject.toml README.md /app/
+COPY etc /app/etc/
+COPY marmolada /app/marmolada/
+RUN find /app -type d -a -name __pycache__ -prune -exec rm -rf {} \;
+WORKDIR /app
+
+RUN poetry install --without=dev --extras database
+RUN mkdir -p /etc/marmolada && \
+    ln -s /app/etc/marmolada/config-example.yaml /etc/marmolada/config.yaml

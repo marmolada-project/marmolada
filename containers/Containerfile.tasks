@@ -1,0 +1,5 @@
+FROM localhost/marmolada_base:latest
+
+RUN poetry install --without=dev --extras tasks --extras database
+
+CMD poetry run marmolada tasks serve
