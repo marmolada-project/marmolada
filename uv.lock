@@ -372,16 +372,16 @@ wheels = [
 
 [[package]]
 name = "fastapi-pagination"
-version = "0.15.6"
+version = "0.15.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fastapi" },
     { name = "pydantic" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a0/da/ad34e0fc98ca9731b0f76d07faeb39d525cb80440ac5814e270cb379d92a/fastapi_pagination-0.15.6.tar.gz", hash = "sha256:c59ca1aa056dccee3526953357c2d1128f988f83d3034d95ddb8de6f5a68e9f8", size = 573720, upload-time = "2026-01-11T22:15:36.385Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/be/983cf1966755b19da2fe4f544bd5c5507f391432b40ea8c142199caca51a/fastapi_pagination-0.15.7.tar.gz", hash = "sha256:28c705b3f261873c2812120a948a6711a909967cb6f33c0ffa826f44a76aafba", size = 574572, upload-time = "2026-01-25T16:57:55.69Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/01/28/0cf3b51115e98c0b84553b9e11ec07f59ae580bf8585eb7876fa9afe4c7a/fastapi_pagination-0.15.6-py3-none-any.whl", hash = "sha256:5c44bfaa78c1c968ca6f027b01a27c1805194c7cc8776eb84ec78235abcdaece", size = 59624, upload-time = "2026-01-11T22:15:37.746Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/6e/df0fdb457dd171e7b64e422ddbe3343c51553d9170a9fbf0f32b8cac1a05/fastapi_pagination-0.15.7-py3-none-any.whl", hash = "sha256:eee5fcd2b421df90cbfa458239aa2c575a98331219136588282fd965dbc157bc", size = 59893, upload-time = "2026-01-25T16:57:54.128Z" },
 ]
 
 [package.optional-dependencies]
@@ -729,12 +729,12 @@ requires-dist = [
     { name = "click", specifier = ">=8.0.3,<9.0.0" },
     { name = "click-plugins", specifier = ">=1.1.1,<2.0.0" },
     { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.95,<0.129" },
-    { name = "fastapi-pagination", extras = ["asyncpg", "sqlalchemy"], marker = "extra == 'api'", specifier = ">=0.13.0,<0.15.7" },
+    { name = "fastapi-pagination", extras = ["asyncpg", "sqlalchemy"], marker = "extra == 'api'", specifier = ">=0.13.0,<0.15.8" },
     { name = "greenlet", marker = "extra == 'api'", specifier = ">=3.0.0rc0,<4.0.0" },
     { name = "psycopg2", marker = "extra == 'api'", specifier = ">=2.9.6,<3.0.0" },
     { name = "pydantic", specifier = ">=2.5.3,<3.0.0" },
     { name = "pydantic-settings", specifier = ">=2.3.4,<3.0.0" },
-    { name = "python-multipart", marker = "extra == 'api'", specifier = ">=0.0.6,<0.0.22" },
+    { name = "python-multipart", marker = "extra == 'api'", specifier = ">=0.0.6,<0.0.23" },
     { name = "pyxdg", marker = "extra == 'tasks'", specifier = ">=0.28.0,<0.29.0" },
     { name = "pyyaml", specifier = ">=6.0,<7.0" },
     { name = "sqlalchemy", marker = "extra == 'api'", specifier = ">=2.0.13,<3.0.0" },
@@ -1339,11 +1339,11 @@ wheels = [
 
 [[package]]
 name = "python-multipart"
-version = "0.0.21"
+version = "0.0.22"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/78/96/804520d0850c7db98e5ccb70282e29208723f0964e88ffd9d0da2f52ea09/python_multipart-0.0.21.tar.gz", hash = "sha256:7137ebd4d3bbf70ea1622998f902b97a29434a9e8dc40eb203bbcf7c2a2cba92", size = 37196, upload-time = "2025-12-17T09:24:22.446Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/94/01/979e98d542a70714b0cb2b6728ed0b7c46792b695e3eaec3e20711271ca3/python_multipart-0.0.22.tar.gz", hash = "sha256:7340bef99a7e0032613f56dc36027b959fd3b30a787ed62d310e951f7c3a3a58", size = 37612, upload-time = "2026-01-25T10:15:56.219Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/aa/76/03af049af4dcee5d27442f71b6924f01f3efb5d2bd34f23fcd563f2cc5f5/python_multipart-0.0.21-py3-none-any.whl", hash = "sha256:cf7a6713e01c87aa35387f4774e812c4361150938d20d232800f75ffcf266090", size = 24541, upload-time = "2025-12-17T09:24:21.153Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/d0/397f9626e711ff749a95d96b7af99b9c566a9bb5129b8e4c10fc4d100304/python_multipart-0.0.22-py3-none-any.whl", hash = "sha256:2b2cd894c83d21bf49d702499531c7bafd057d730c201782048f7945d82de155", size = 24579, upload-time = "2026-01-25T10:15:54.811Z" },
 ]
 
 [[package]]
