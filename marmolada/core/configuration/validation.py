@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Annotated, Literal
 
@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, Settings
 # types
 
 
-class LogLevel(str, Enum):
+class LogLevel(StrEnum):
     trace = "trace"
     debug = "debug"
     info = "info"
