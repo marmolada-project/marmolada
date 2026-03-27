@@ -1,0 +1,47 @@
+name: marmolada
+
+volumes:
+  pgsql-data:
+
+services:
+  db:
+    image: quay.io/fedora/postgresql-16
+    command:
+      - sh
+      - -c
+      - sleep 10; run-postgresql
+    environment:
+      - POSTGRESQL_USER=marmolada
+      - POSTGRESQL_PASSWORD=marmolada
+      - POSTGRESQL_DATABASE=marmolada
+    volumes:
+      - pgsql-data:/var/lib/pgsql/data
+    healthcheck:
+      test:
+        - CMD
+        - psql
+        - -h
+        - localhost
+        - -U
+        - postgres
+        - -d
+        - template1
+        - -c
+        - select datname from pg_database;
+      start_period: 1m
+      start_interval: 1s
+
+  db-setup:
+    image: localhost/marmolada_db-chores
+    command: poetry run marmolada database setup
+      # depends -> ... -> condition: service_healthy doesn’t work properly, just wait a little
+      #- sh
+      #- -c
+      #- sleep 1; exec poetry run marmolada database setup
+    environment:
+      marmolada_database__sqlalchemy__url: postgresql://marmolada:marmolada@db/marmolada # notsecret
+    depends:
+      db:
+        condition: service_healthy
+    healthcheck:
+      disabled: true

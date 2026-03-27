@@ -1,0 +1,3 @@
+FROM localhost/marmolada_base:latest
+
+CMD /app/scripts/db-chores.sh
