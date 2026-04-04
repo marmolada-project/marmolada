@@ -80,7 +80,7 @@ class Artifact(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
         "path", unique=True, nullable=False, default=_artifact_path_default
     )
 
-    import_id: Mapped[int] = mapped_column(ForeignKey(Import.id))
+    import_id: Mapped[int] = mapped_column(ForeignKey(Import.id), index=True)
     import_: Mapped[Import] = relationship(back_populates="artifacts")
 
     source_uri: Mapped[str | None]

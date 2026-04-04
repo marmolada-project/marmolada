@@ -71,12 +71,14 @@ tags_relations = Table(
         BigInteger,
         ForeignKey("tags.id", onupdate="CASCADE", ondelete="CASCADE"),
         primary_key=True,
+        index=True,
     ),
     Column(
         "child_id",
         BigInteger,
         ForeignKey("tags.id", onupdate="CASCADE", ondelete="CASCADE"),
         primary_key=True,
+        index=True,
     ),
 )
 
@@ -271,12 +273,14 @@ tag_language_table = Table(
         BigInteger,
         ForeignKey("tag_labels.id", ondelete="CASCADE", onupdate="CASCADE"),
         primary_key=True,
+        index=True,
     ),
     Column(
         "language_id",
         BigInteger,
         ForeignKey("languages.id", ondelete="CASCADE", onupdate="CASCADE"),
         primary_key=True,
+        index=True,
     ),
 )
 
@@ -300,7 +304,10 @@ class TagLabel(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     )
 
     tag_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey(Tag.id, onupdate="CASCADE", ondelete="CASCADE"), nullable=False
+        BigInteger,
+        ForeignKey(Tag.id, onupdate="CASCADE", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     tag: Mapped[Tag] = relationship(Tag, back_populates="label_objs")
 
