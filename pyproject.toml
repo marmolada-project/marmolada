@@ -37,7 +37,7 @@ dev = [
 
 [project.optional-dependencies]
 api = [
-    "fastapi<0.137,>=0.95",
+    "fastapi<0.138,>=0.95",
     "uvicorn<0.50,>=0.16",
     "python-multipart<0.0.33,>=0.0.6",
     "SQLAlchemy<3.0.0,>=2.0.13",
