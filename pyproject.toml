@@ -32,12 +32,12 @@ dev = [
     "pytest-postgresql<8.1.1,>=5.0.0",
     "coverage<8.0.0,>=7.4.1",
     "pytest-xdist<4.0.0,>=3.5.0",
-    "pillow<12.3.0,>=10.4.0",
+    "pillow<12.4.0,>=10.4.0",
 ]
 
 [project.optional-dependencies]
 api = [
-    "fastapi<0.139,>=0.95",
+    "fastapi<0.140,>=0.95",
     "uvicorn<0.50,>=0.16",
     "python-multipart<0.0.33,>=0.0.6",
     "SQLAlchemy<3.0.0,>=2.0.13",
