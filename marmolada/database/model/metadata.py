@@ -10,7 +10,7 @@ from .. import Base
 
 type JSONDict = dict[str, "JSONValue"]
 type JSONType = list["JSONValue"] | JSONDict
-type JSONValue = int | float | str | None | JSONType
+type JSONValue = int | float | str | JSONType | None
 
 
 class MetadataType(Enum):
