@@ -3,7 +3,7 @@ import logging
 import os
 import pathlib
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from anyio import Path as AsyncPath
 from sqlalchemy import ForeignKey, event
@@ -22,6 +22,7 @@ from sqlalchemy.orm.collections import attribute_keyed_dict
 from sqlalchemy.sql import SQLColumnExpression
 
 from ...core.configuration import config
+from ...core.types import JSONDict
 from .. import Base
 from ..mixins import BigIntPrimaryKey, Creatable, Updatable, UuidAltKey
 from .metadata import ArtifactMetadata
@@ -36,7 +37,7 @@ log = logging.getLogger(__name__)
 class Import(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     __tablename__ = "imports"
 
-    meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
+    meta: Mapped[JSONDict] = mapped_column(default=dict)
     _complete: Mapped[bool] = mapped_column("complete", default=False)
     artifacts: Mapped[set[Artifact]] = relationship(back_populates="import_")
 
@@ -46,14 +47,15 @@ class Import(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     def complete(self) -> bool:
         return self._complete
 
-    @complete.setter
-    def complete(self, value: bool) -> None:
+    @complete.inplace.setter
+    def _complete_setter(self, value: bool) -> None:
         if self._complete and not value:
             raise ValueError("Completed import can’t be set incomplete.")
         self._complete = value
 
-    @complete.expression
-    def complete(cls) -> QueryableAttribute:
+    @complete.inplace.expression
+    @classmethod
+    def _complete_expression(cls) -> QueryableAttribute:
         return cls._complete
 
 
@@ -68,15 +70,14 @@ def _artifact_path_default(context: DefaultExecutionContext) -> str:
 class Artifact(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     __tablename__ = "artifacts"
 
-    artifacts_root: ClassVar[pathlib.Path | None] = None
+    artifacts_root: ClassVar[pathlib.Path]
 
     _sessions_added_files: ClassVar = defaultdict(set)
     _sessions_removed_files: ClassVar = defaultdict(set)
 
     content_type: Mapped[str | None]
 
-    # Default for _path set in artifact_path_init() below
-    _path: Mapped[pathlib.Path] = mapped_column(
+    _path: Mapped[pathlib.PurePath] = mapped_column(
         "path", unique=True, nullable=False, default=_artifact_path_default
     )
 
@@ -97,8 +98,8 @@ class Artifact(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
 
     tasks: Mapped[set[ArtifactTask]] = relationship(back_populates="artifact")
 
-    def __new__(cls, *args: tuple[Any], **kwargs: dict[str, Any]) -> Artifact:
-        if not Artifact.artifacts_root:
+    def __new__(cls, *args: object, **kwargs: object) -> Artifact:
+        if not getattr(Artifact, "artifacts_root", None):
             Artifact.artifacts_root = pathlib.Path(config["artifacts"]["root"])
         return super().__new__(cls)
 
@@ -106,10 +107,11 @@ class Artifact(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     def path(self) -> pathlib.PurePath:
         return pathlib.PurePath(self._path)
 
-    @path.setter
-    def path(self, value: pathlib.PurePath | str) -> None:
+    @path.inplace.setter
+    def _path_setter(self, value: pathlib.PurePath | str) -> None:
         if isinstance(value, str):
-            value = value.rstrip("/")
+            value = pathlib.PurePath(value.rstrip("/"))
+
         if value != self._path and self.full_path.exists():
             new_full_path = self.artifacts_root / value
             os.makedirs(new_full_path.parent, exist_ok=True)
@@ -119,8 +121,9 @@ class Artifact(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
 
         self._path = value
 
-    @path.expression
-    def path(cls) -> SQLColumnExpression:
+    @path.inplace.expression
+    @classmethod
+    def _path_expression(cls) -> SQLColumnExpression:
         return cls._path
 
     @property

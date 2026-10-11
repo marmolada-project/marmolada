@@ -10,7 +10,9 @@ TEST_CTX = {}
 
 @pytest.fixture
 def plugin_mgr():
-    with mock.patch.object(main, "plugin_mgr", new_callable=mock.AsyncMock) as plugin_mgr:
+    with mock.patch.object(
+        main, "plugin_mgr", new_callable=mock.AsyncMock, create=True
+    ) as plugin_mgr:
         yield plugin_mgr
 
 

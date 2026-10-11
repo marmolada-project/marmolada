@@ -1,16 +1,12 @@
 from enum import Enum
-from typing import Any
 
 from sqlalchemy import BigInteger, ForeignKey, Text, cast
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import SQLColumnExpression, case
 
+from ...core.types import JSONCompound, JSONValue
 from .. import Base
-
-type JSONDict = dict[str, "JSONValue"]
-type JSONType = list["JSONValue"] | JSONDict
-type JSONValue = int | float | str | JSONType | None
 
 
 class MetadataType(Enum):
@@ -25,7 +21,7 @@ class Metadata:
 
     _type: Mapped[MetadataType] = mapped_column("type")
 
-    json_value: Mapped[dict[str, Any] | None]
+    json_value: Mapped[JSONCompound | None]
     int_value: Mapped[int | None]
     float_value: Mapped[float | None]
     str_value: Mapped[str | None]
@@ -44,8 +40,8 @@ class Metadata:
             case _:
                 raise TypeError("_type unset")
 
-    @value.setter
-    def value(self, value: JSONValue) -> None:
+    @value.inplace.setter
+    def _value_setter(self, value: JSONValue) -> None:
         if self._type:
             raise ValueError("Value already set")
         match value:
@@ -64,8 +60,9 @@ class Metadata:
             case _:
                 raise TypeError(f"Can’t store {value!r}, unknown type {type(value)}")
 
-    @value.expression
-    def value(cls) -> SQLColumnExpression:
+    @value.inplace.expression
+    @classmethod
+    def _value_expression(cls) -> SQLColumnExpression:
         return case(
             (cls._type == MetadataType.JSON, cast(cls.json_value, Text)),
             (cls._type == MetadataType.INT, cast(cls.int_value, Text)),
@@ -77,8 +74,12 @@ class Metadata:
     def numeric_value(self) -> int | float:
         match self._type:
             case MetadataType.INT:
+                if self.int_value is None:
+                    raise ValueError(f"{self}.int_value unset")  # pragma: no cover
                 return self.int_value
             case MetadataType.FLOAT:
+                if self.float_value is None:
+                    raise ValueError(f"{self}.float_value unset")  # pragma: no cover
                 return self.float_value
             case _:
                 if self._type:
@@ -86,8 +87,8 @@ class Metadata:
                 else:
                     raise TypeError("_type unset")
 
-    @numeric_value.setter
-    def numeric_value(self, value: int | float) -> None:
+    @numeric_value.inplace.setter
+    def _numeric_value_setter(self, value: int | float) -> None:
         if self._type:
             raise ValueError("Value already set")
         match value:
@@ -100,8 +101,9 @@ class Metadata:
             case _:
                 raise TypeError(f"Can’t store {value!r}, not of numerical type {type(value)}")
 
-    @numeric_value.expression
-    def numeric_value(cls) -> SQLColumnExpression:
+    @numeric_value.inplace.expression
+    @classmethod
+    def _numeric_value_expression(cls) -> SQLColumnExpression:
         return case(
             (cls._type == MetadataType.INT, cls.int_value),
             (cls._type == MetadataType.FLOAT, cls.float_value),

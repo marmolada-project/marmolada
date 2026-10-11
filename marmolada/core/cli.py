@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Sequence
 from importlib.metadata import entry_points
 from pathlib import Path
 
@@ -22,7 +23,7 @@ DEFAULT_CONFIG_FILE = Path("/etc/marmolada/config.yaml")
 )
 @click.option("--debug/--no-debug", default=False, help="Run with debugging enabled")
 @click.pass_context
-def cli(ctx: click.Context, config_paths: tuple[Path], debug: bool):
+def cli(ctx: click.Context, config_paths: Sequence[Path], debug: bool):
     """Marmolada - a media object store."""
     ctx.ensure_object(dict)
     ctx.obj["debug"] = debug

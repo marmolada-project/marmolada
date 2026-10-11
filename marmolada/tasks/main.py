@@ -10,11 +10,14 @@ if TYPE_CHECKING:
     from .plugins import TaskPluginManager
 
 log = logging.getLogger(__name__)
-plugin_mgr: TaskPluginManager | None = None
+plugin_mgr: TaskPluginManager
 
 
 @async_shared_broker.task
 async def process_artifact(uuid: UUID) -> None:
+    if TYPE_CHECKING:
+        global plugin_mgr
+        assert plugin_mgr
     print(f"process_artifact({uuid=!s}) => …")
     await plugin_mgr.process_scope(scope="artifact", uuid=uuid)
     print(f"process_artifact({uuid=!s}) done")
@@ -22,6 +25,9 @@ async def process_artifact(uuid: UUID) -> None:
 
 @async_shared_broker.task
 async def process_import(uuid: UUID) -> None:
+    if TYPE_CHECKING:
+        global plugin_mgr
+        assert plugin_mgr
     log.debug(f"process_import({uuid=!s}) => …")
     await plugin_mgr.process_scope(scope="import", uuid=uuid)
     log.debug(f"process_import({uuid=!s}) done")

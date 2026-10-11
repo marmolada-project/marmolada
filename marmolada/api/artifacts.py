@@ -20,7 +20,7 @@ from .imports import router as imports_router
 router = APIRouter(prefix="/artifacts")
 
 
-def _get_artifacts_query(import_uuid: UUID | None = None) -> Select:
+def _get_artifacts_query(import_uuid: UUID | None = None) -> Select[Artifact]:
     query = select(Artifact).order_by(Artifact.created_at).options(selectinload(Artifact.import_))
     if import_uuid:
         query = query.join(Artifact.import_.and_(Import.uuid == import_uuid))
@@ -69,9 +69,9 @@ async def post_artifact_for_import(
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="import not found")
 
     artifact = Artifact(
-        import_=import_,
-        source_uri=str(source_uri) if source_uri else None,
-        file_name=file.filename,
+        import_=import_,  # pyright: ignore[reportArgumentType]
+        source_uri=str(source_uri) if source_uri else None,  # pyright: ignore[reportArgumentType]
+        file_name=file.filename,  # pyright: ignore[reportArgumentType]
     )
 
     db_session.add(artifact)
@@ -112,10 +112,10 @@ async def post_artifact_for_import_from_local_file(
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="import not found")
 
     artifact = Artifact(
-        content_type=data.content_type,
-        import_=import_,
-        source_uri=str(data.source_uri),
-        file_name=data.source_uri.path.rsplit("/", 1)[-1],
+        content_type=data.content_type,  # pyright: ignore[reportArgumentType]
+        import_=import_,  # pyright: ignore[reportArgumentType]
+        source_uri=str(data.source_uri),  # pyright: ignore[reportArgumentType]
+        file_name=data.source_uri.path.rsplit("/", 1)[-1],  # pyright: ignore[reportArgumentType]
     )
 
     db_session.add(artifact)

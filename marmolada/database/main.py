@@ -1,15 +1,15 @@
 import pathlib
 from copy import deepcopy
-from typing import Any
 
 from sqlalchemy import MetaData
 from sqlalchemy import types as sqla_types
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.engine import URL, make_url
-from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncEngine, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase
 
 from ..core.configuration import config
+from ..core.types import JSONCompound, JSONDict
 from . import types
 
 # use custom metadata to specify naming convention
@@ -24,8 +24,9 @@ metadata = MetaData(naming_convention=naming_convention)
 
 type_annotation_map = {
     str: sqla_types.UnicodeText(),
-    pathlib.Path: types.Path(),
-    dict[str, Any]: JSONB(),
+    pathlib.PurePath: types.Path(),
+    JSONCompound: JSONB(),
+    JSONDict: JSONB(),
 }
 
 
@@ -34,10 +35,10 @@ class Base(DeclarativeBase, AsyncAttrs):
     type_annotation_map = type_annotation_map
 
 
-session_maker: AsyncSession = sessionmaker(class_=AsyncSession, expire_on_commit=False, future=True)
+session_maker = async_sessionmaker(expire_on_commit=False, future=True)
 
 
-def init_model(engine: AsyncEngine = None) -> None:
+def init_model(engine: AsyncEngine | None = None) -> None:
     if not engine:
         engine = get_engine()
     session_maker.configure(bind=engine)

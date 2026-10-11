@@ -9,7 +9,7 @@ from .validation import ConfigModel
 config = {}
 
 
-def _expand_normalize_config_files(config_files: list[Path | str]) -> list[Path]:
+def _expand_normalize_config_files(config_files: tuple[Path | str, ...]) -> list[Path]:
     config_file_paths = []
 
     for path in config_files:
@@ -23,10 +23,9 @@ def _expand_normalize_config_files(config_files: list[Path | str]) -> list[Path]
     return config_file_paths
 
 
-def read_configuration(*config_files: list[Path | str]):
-    config_files = _expand_normalize_config_files(config_files)
+def read_configuration(*config_files: Path | str) -> None:
     new_config = {}
-    for config_file in config_files:
+    for config_file in _expand_normalize_config_files(config_files):
         with config_file.open("r") as fp:
             for config_doc in yaml.safe_load_all(fp):
                 new_config = merge_dicts(new_config, config_doc)
