@@ -1,3 +1,3 @@
-from . import _compat, artifacts, imports, main
+from . import _compat
 
 del _compat
