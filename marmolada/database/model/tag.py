@@ -1,5 +1,6 @@
 import re
 from collections.abc import Collection, Sequence
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     BigInteger,
@@ -23,6 +24,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .. import Base
 from ..mixins import BigIntPrimaryKey, Creatable, Updatable, UuidAltKey
 from .language import Language
+
+if TYPE_CHECKING:
+    from ..model import Tag
 
 
 class TagCyclicGraphError(Exception):
@@ -216,7 +220,7 @@ class Tag(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     def descendants_query(self) -> Selectable:
         return select(Tag).filter(Tag.id.in_(select(self.descendants_id_query)))
 
-    async def add_parents(self, session: AsyncSession, *new_parents: tuple[Tag]) -> None:
+    async def add_parents(self, session: AsyncSession, *new_parents: Tag) -> None:
         cyclic_candidates = []
 
         for candidate in new_parents:
@@ -240,7 +244,7 @@ class Tag(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
         for new_parent in new_parents:
             (await new_parent.awaitable_attrs.children).add(self)
 
-    async def add_children(self, session: AsyncSession, *new_children: tuple[Tag]) -> None:
+    async def add_children(self, session: AsyncSession, *new_children: Tag) -> None:
         cyclic_candidates = []
 
         for candidate in new_children:

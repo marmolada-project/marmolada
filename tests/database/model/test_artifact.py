@@ -14,7 +14,9 @@ from .common import ModelTestBase
 
 @pytest.fixture(autouse=True)
 def artifacts_root_unset_cache():
-    with mock.patch.object(Artifact, "artifacts_root", Path(config["artifacts"]["root"])):
+    with mock.patch.object(
+        Artifact, "artifacts_root", Path(config["artifacts"]["root"]), create=True
+    ):
         yield
 
 
