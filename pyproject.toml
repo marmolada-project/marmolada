@@ -9,7 +9,7 @@ description = ""
 authors = [
     {name = "Nils Philippsen", email = "nils@tiptoe.de"},
 ]
-requires-python = "<4.0,>=3.12"
+requires-python = "<4.0,>=3.14"
 dependencies = [
     "PyYAML<7.0,>=6.0",
     "click<9.0.0,>=8.0.3",

@@ -26,7 +26,7 @@ class Language(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     _territory: Mapped[str | None] = mapped_column("territory", String(2))
 
     @classmethod
-    async def by_iso_code(cls, session: AsyncSession, iso_code: str) -> "Language":
+    async def by_iso_code(cls, session: AsyncSession, iso_code: str) -> Language:
         try:
             with session.no_autoflush:
                 obj = (await session.execute(select(cls).filter_by(iso_code=iso_code))).scalar_one()
