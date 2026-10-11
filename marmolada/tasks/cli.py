@@ -53,5 +53,5 @@ def serve(worker_args: tuple[str]):
     os.environ["MARMOLADA_CONFIG_JSON"] = json.dumps(config)
     try:
         run_worker(cooked_args)
-    except (KeyboardInterrupt, ProcessLookupError):
+    except KeyboardInterrupt, ProcessLookupError:
         pass

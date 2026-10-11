@@ -38,9 +38,9 @@ class Import(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
 
     meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
     _complete: Mapped[bool] = mapped_column("complete", default=False)
-    artifacts: Mapped[set["Artifact"]] = relationship(back_populates="import_")
+    artifacts: Mapped[set[Artifact]] = relationship(back_populates="import_")
 
-    tasks: Mapped[set["ImportTask"]] = relationship(back_populates="import_")
+    tasks: Mapped[set[ImportTask]] = relationship(back_populates="import_")
 
     @hybrid_property
     def complete(self) -> bool:
@@ -91,13 +91,13 @@ class Artifact(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
         collection_class=attribute_keyed_dict("name"),
         cascade="all, delete-orphan",
     )
-    metadata_: AssociationProxy[dict[str, "JSONValue"]] = association_proxy(
+    metadata_: AssociationProxy[dict[str, JSONValue]] = association_proxy(
         "metadata_objs", "value", creator=lambda k, v: ArtifactMetadata(name=k, value=v)
     )
 
-    tasks: Mapped[set["ArtifactTask"]] = relationship(back_populates="artifact")
+    tasks: Mapped[set[ArtifactTask]] = relationship(back_populates="artifact")
 
-    def __new__(cls, *args: tuple[Any], **kwargs: dict[str, Any]) -> "Artifact":
+    def __new__(cls, *args: tuple[Any], **kwargs: dict[str, Any]) -> Artifact:
         if not Artifact.artifacts_root:
             Artifact.artifacts_root = pathlib.Path(config["artifacts"]["root"])
         return super().__new__(cls)

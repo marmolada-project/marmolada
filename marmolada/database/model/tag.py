@@ -31,9 +31,9 @@ class TagCyclicGraphError(Exception):
     def __init__(
         self,
         *args,
-        target_obj: "Tag",
-        new_parents_failing: Collection["Tag"] = (),
-        new_children_failing: Collection["Tag"] = (),
+        target_obj: Tag,
+        new_parents_failing: Collection[Tag] = (),
+        new_children_failing: Collection[Tag] = (),
         **kwargs,
     ) -> None:
         self.target_obj = target_obj
@@ -96,7 +96,7 @@ class Tag(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
 
     __tablename__ = "tags"
 
-    parents: Mapped[set["Tag"]] = relationship(
+    parents: Mapped[set[Tag]] = relationship(
         "Tag",
         secondary="tags_relations",
         primaryjoin="Tag.id==tags_relations.c.child_id",
@@ -104,7 +104,7 @@ class Tag(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
         collection_class=set,
         back_populates="children",
     )
-    children: Mapped[set["Tag"]] = relationship(
+    children: Mapped[set[Tag]] = relationship(
         "Tag",
         secondary="tags_relations",
         primaryjoin="Tag.id==tags_relations.c.parent_id",
@@ -113,7 +113,7 @@ class Tag(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
         back_populates="parents",
     )
 
-    label_objs: Mapped[set["TagLabel"]] = relationship(
+    label_objs: Mapped[set[TagLabel]] = relationship(
         "TagLabel", back_populates="tag", lazy="joined"
     )
     labels = association_proxy("label_objs", "label")
@@ -133,7 +133,7 @@ class Tag(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     @classmethod
     async def by_label_path(
         cls, session: AsyncSession, label_path: Sequence[str], create=False
-    ) -> "Tag":
+    ) -> Tag:
         tag = None
         creating_tags = False
 
@@ -216,7 +216,7 @@ class Tag(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
     def descendants_query(self) -> Selectable:
         return select(Tag).filter(Tag.id.in_(select(self.descendants_id_query)))
 
-    async def add_parents(self, session: AsyncSession, *new_parents: tuple["Tag"]) -> None:
+    async def add_parents(self, session: AsyncSession, *new_parents: tuple[Tag]) -> None:
         cyclic_candidates = []
 
         for candidate in new_parents:
@@ -240,7 +240,7 @@ class Tag(Base, BigIntPrimaryKey, UuidAltKey, Creatable, Updatable):
         for new_parent in new_parents:
             (await new_parent.awaitable_attrs.children).add(self)
 
-    async def add_children(self, session: AsyncSession, *new_children: tuple["Tag"]) -> None:
+    async def add_children(self, session: AsyncSession, *new_children: tuple[Tag]) -> None:
         cyclic_candidates = []
 
         for candidate in new_children:
