@@ -383,16 +383,16 @@ wheels = [
 
 [[package]]
 name = "fastapi-pagination"
-version = "0.16.1"
+version = "0.16.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fastapi" },
     { name = "pydantic" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/39/75/f1040bac6fa6125b95ce5f399c32342674ac91b59c00eb157ba73b74d26d/fastapi_pagination-0.16.1.tar.gz", hash = "sha256:c43a4286f7dd4c25501da7f5ae84a89172d3c5f3c4a93b4bc8c6639ed754d11d", size = 618177, upload-time = "2026-10-08T18:39:32.741Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9c/a1/73165d7932f1f87bac9f5e12e65864cbce1bd86882ed37c7603888d31299/fastapi_pagination-0.16.2.tar.gz", hash = "sha256:f9b0bec39f2156e66b3ef73c35cc6eb7345faa86a7c3149d4f63b60b0e9e5e58", size = 662215, upload-time = "2026-11-03T23:22:37.135Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/9c/5a6dec42593fd408e564960340ef930bbe0fcae3ce7b11641f2bcb6278c3/fastapi_pagination-0.16.1-py3-none-any.whl", hash = "sha256:a91f030f764a5077b6cea41bc1df8c4cf738ac5bad2dc29977f3f0482e6202d2", size = 52562, upload-time = "2026-10-08T18:39:31.191Z" },
+    { url = "https://files.pythonhosted.org/packages/ec/01/609ad358f28bef0d1f42694e2e1894f1791c443fd8bacc426a518a10ef88/fastapi_pagination-0.16.2-py3-none-any.whl", hash = "sha256:6d154e37a1e9fefdd8c3730786863aa9502a90c08b6c59326ae3a5e07ae0a19d", size = 53227, upload-time = "2026-11-03T23:22:35.536Z" },
 ]
 
 [package.optional-dependencies]
@@ -707,7 +707,7 @@ requires-dist = [
     { name = "click", specifier = ">=8.0.3,<9.0.0" },
     { name = "click-plugins", specifier = ">=1.1.1,<2.0.0" },
     { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.95,<0.163" },
-    { name = "fastapi-pagination", extras = ["asyncpg", "sqlalchemy"], marker = "extra == 'api'", specifier = ">=0.13.0,!=0.15.11,<0.16.2" },
+    { name = "fastapi-pagination", extras = ["asyncpg", "sqlalchemy"], marker = "extra == 'api'", specifier = ">=0.13.0,!=0.15.11,<0.16.3" },
     { name = "greenlet", marker = "extra == 'api'", specifier = ">=3.0.0rc0,<4.0.0" },
     { name = "psycopg2", marker = "extra == 'api'", specifier = ">=2.9.6,<3.0.0" },
     { name = "pydantic", specifier = ">=2.5.3,<3.0.0" },
